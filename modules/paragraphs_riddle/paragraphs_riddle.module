@@ -1,0 +1,24 @@
+<?php
+/**
+ * Implements hook_preprocess_paragraphs().
+ */
+function paragraphs_riddle_preprocess_paragraph(&$variables) {
+  if ($variables['paragraph']->getType() === 'paragraphs_riddle') {
+    $paragraph = $variables['paragraph'];
+    $field_data = $paragraph->field_link->getValue();
+    $riddle_url = $field_data[0]['uri'];
+    $markup = '<div class="riddle_target" data-url="' . $riddle_url . '" style="max-width:640px;margin:0 auto"><div style="display:none"><section></section><section></section><section></section></div><div class="rid-load" style="background:#000 url(//www.riddle.com/assets/img/loader.gif) no-repeat center/10%;padding-top:56%;border-radius:5px"></div></div><script src="//www.riddle.com/files/js/embed.js"></script>';
+    $response = array(
+      '#type' => 'markup',
+      '#markup' => render($markup),
+      "#style_name" => 'riddle_iframe',
+      '#allowed_tags' => array('class', 'div'),
+      '#attached' => array(
+        'library' => array(
+          'paragraphs_riddle/riddle.embed'
+        )
+      )
+    );
+    $variables['content'] = $response;
+  }
+}

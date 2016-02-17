@@ -1,0 +1,126 @@
+diff --git a/config/install/riddle.settings.yml b/config/install/riddle.settings.yml
+index 092ca2a..4cb1db3 100644
+--- a/config/install/riddle.settings.yml
++++ b/config/install/riddle.settings.yml
+@@ -1,2 +1,2 @@
+ riddle:
+-  token: 'EHM3jFp7xK'
+\ No newline at end of file
++  token: ''
+diff --git a/riddle.links.menu.yml b/riddle.links.menu.yml
+new file mode 100644
+index 0000000..abcfc49
+--- /dev/null
++++ b/riddle.links.menu.yml
+@@ -0,0 +1,5 @@
++riddle.admin_settings:
++  title: 'Riddle settings'
++  description: 'Configure Riddle settings.'
++  route_name: riddle.admin_settings
++  parent: 'system.admin_config_content'
+diff --git a/riddle.module b/riddle.module
+index b3875e0..b2f4d93 100644
+--- a/riddle.module
++++ b/riddle.module
+@@ -13,7 +13,6 @@ function riddle_help($route_name, RouteMatchInterface $route_match) {
+         <h2>Riddle Editor for Drupal.</h2>
+         <h3>Instructions</h3>
+         <p>Goto Riddle.com and get an auth token</p>
+-
+       '
+       );
+   }
+diff --git a/riddle.routing.yml b/riddle.routing.yml
+index 888d198..326f7a8 100644
+--- a/riddle.routing.yml
++++ b/riddle.routing.yml
+@@ -19,3 +19,11 @@ riddle.update_token:
+     _controller: '\Drupal\riddle\Controller\RiddleController::SetToken'
+   requirements:
+     _permission: 'access content'
++
++riddle.admin_settings:
++  path: '/admin/config/content/riddle'
++  defaults:
++    _form: '\Drupal\riddle\Form\SettingsForm'
++    _title: 'Riddle settings'
++  requirements:
++    _permission: 'administer site configuration'
+diff --git a/src/Controller/RiddleController.php b/src/Controller/RiddleController.php
+index 7ef467b..cb82eb7 100644
+--- a/src/Controller/RiddleController.php
++++ b/src/Controller/RiddleController.php
+@@ -62,4 +62,4 @@ class RiddleController extends ControllerBase {
+   }
+ }
+ 
+-?>
+\ No newline at end of file
++?>
+diff --git a/src/Form/SettingsForm.php b/src/Form/SettingsForm.php
+new file mode 100644
+index 0000000..7046852
+--- /dev/null
++++ b/src/Form/SettingsForm.php
+@@ -0,0 +1,61 @@
++<?php
++
++/**
++ * @file
++ * Contains \Drupal\riddle\Form\SettingsForm.
++ */
++
++namespace Drupal\riddle\Form;
++
++use Drupal\Core\Form\ConfigFormBase;
++use Drupal\Core\Form\FormStateInterface;
++use Symfony\Component\DependencyInjection\ContainerInterface;
++
++/**
++ * Defines a form that configures riddle settings.
++ */
++class SettingsForm extends ConfigFormBase {
++  /**
++   * {@inheritdoc}
++   */
++  public function getFormId() {
++    return 'riddle_settings_form';
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public function buildForm(array $form, FormStateInterface $form_state) {
++    $settings = $this->config('riddle.settings');
++
++    $form['token'] = array(
++      '#type' => 'textfield',
++      '#title' => $this->t('Riddle token'),
++      '#description' => $this->t('Goto Riddle.com and get a token from the Account->Token page (you may need to reset to get the first token)'),
++      '#default_value' => $settings->get('riddle.token'),
++    );
++
++
++    return parent::buildForm($form, $form_state);
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public function submitForm(array &$form, FormStateInterface $form_state) {
++    parent::submitForm($form, $form_state);
++    $values = $form_state->getValues();
++    $config =$this->configFactory()->getEditable('riddle.settings');
++    $config->set('riddle.token', $values['token'])->save();
++  }
++
++
++  /**
++   * {@inheritdoc}
++   */
++  protected function getEditableConfigNames() {
++    return [
++      'riddle.settings',
++    ];
++  }
++}

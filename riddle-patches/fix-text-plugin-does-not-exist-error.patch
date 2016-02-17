@@ -1,0 +1,13 @@
+diff --git a/modules/paragraphs_riddle/config/install/core.entity_form_display.paragraph.riddle.default.yml b/modules/paragraphs_riddle/config/install/core.entity_form_display.paragraph.riddle.default.yml
+index 1059752..5ff194d 100644
+--- a/modules/paragraphs_riddle/config/install/core.entity_form_display.paragraph.riddle.default.yml
++++ b/modules/paragraphs_riddle/config/install/core.entity_form_display.paragraph.riddle.default.yml
+@@ -17,7 +17,7 @@ content:
+       placeholder_url: ''
+       placeholder_title: 'Enter Riddle URL'
+     third_party_settings: {  }
+-    type: text
++    type: string_textfield
+ hidden:
+   created: true
+   uid: true

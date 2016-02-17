@@ -1,0 +1,21 @@
+diff --git a/riddle.module b/riddle.module
+index 295e70b..b3875e0 100644
+--- a/riddle.module
++++ b/riddle.module
+@@ -19,16 +19,3 @@ function riddle_help($route_name, RouteMatchInterface $route_match) {
+   }
+ }
+ 
+-
+-/**
+- * Implements hook_install().
+- */
+-function riddle_install() {
+-  user_role_change_permissions(
+-    RoleInterface::ANONYMOUS_ID,
+-    array(
+-      'generate riddle' => TRUE,
+-    )
+-  );
+-}
+-
