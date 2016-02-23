@@ -6,4 +6,4 @@ core: 8.x
 version: 1.1
 hidden: false
 dependencies:
-  - paragraphs_starterkit_link
+  - paragraphs

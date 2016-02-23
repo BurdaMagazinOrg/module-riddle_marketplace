@@ -57,15 +57,13 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
    * Implements \Drupal\ckeditor\Plugin\CKEditorPluginButtonsInterface::getButtons().
    */
   function getButtons() {
+
     return array(
       'RiddleButton' => array(
-        'label' => 'Riddles'
-        ,'icon' => drupal_get_path('module', 'riddle') . '/images/riddle.jpg'
-        ,'image' => drupal_get_path('module', 'riddle') . '/images/riddle.jpg'
-        ,'image_alternative' => 'Riddles'
-        ,'attributes' => array()
-          ,'image' => drupal_get_path('module', 'riddle') . '/images/riddle.jpg'
-          ,'icon' => drupal_get_path('module', 'riddle') . '/images/riddle.jpg'
+        'label' => 'Riddles',
+        'image' => drupal_get_path('module', 'riddle') . '/images/riddle.jpg',
+        'image_alternative' => 'Riddles',
+        'attributes' => array(),
       )
     );
   }

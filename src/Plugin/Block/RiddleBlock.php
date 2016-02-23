@@ -29,7 +29,7 @@ class RiddleBlock extends BlockBase implements BlockPluginInterface {
 
     $response = array(
       '#type' => 'markup',
-      '#markup' => '<iframe style="width:100%; height:2000px" src="https://www.riddle.com/creation/?token=' . $ID . '&client=d8>',
+      '#markup' => '<iframe style="width:100%; height:2000px" src="https://www.riddle.com/creation/?token=' . $ID . '&client=d8" />',
       "#style_name" => 'riddle_iframe',
       '#allowed_tags' => array('iframe'),
       '#attached' => array(

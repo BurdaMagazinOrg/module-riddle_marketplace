@@ -8,4 +8,3 @@ core: 8.x
 dependencies:
   - toolbar
   - ckeditor
-  - paragraphs_starterkit_link

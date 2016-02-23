@@ -31,7 +31,7 @@ class SettingsForm extends ConfigFormBase {
     $form['token'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Riddle token'),
-      '#description' => $this->t('Goto Riddle.com and get a token from the Account->Token page (you may need to reset to get the first token)'),
+      '#description' => $this->t('Goto Riddle.com and get a token from the Account->Plugins page (you may need to reset to get the first token)'),
       '#default_value' => $settings->get('riddle.token'),
     );
 
