@@ -1,4 +1,0 @@
-riddle.admin_content_task:
-  title: Riddles
-  route_name: riddle.list
-  base_route: system.admin_content

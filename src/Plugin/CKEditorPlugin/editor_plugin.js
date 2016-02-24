@@ -4,7 +4,7 @@
  */
 
 /**
- * @fileOverview The "riddle" plugin that makes it possible to embed a riddle from a list of users' riddles
+ * @fileOverview The "riddle_marketplace" plugin that makes it possible to embed a riddle from a list of users' riddles
  *
  *
  */

@@ -2,13 +2,13 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.riddle.field_link
-    - paragraphs.paragraphs_type.riddle
+    - field.field.paragraph.riddle_marketplace.field_link
+    - paragraphs.paragraphs_type.riddle_marketplace
   module:
     - link
-id: paragraph.riddle.default
+id: paragraph.riddle_marketplace.default
 targetEntityType: paragraph
-bundle: paragraphs_riddle
+bundle: paragraphs_riddle_marketplace
 mode: default
 content:
   field_link:

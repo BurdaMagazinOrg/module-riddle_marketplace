@@ -1,4 +1,0 @@
-riddle_list:
-  title: Riddle Lists
-  route_name: riddle.list
-  base_route: node.content_overview
