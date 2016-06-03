@@ -1,4 +1,4 @@
-name: Paragraphs Type: Riddle
+name: 'Paragraphs Type: Riddle'
 description: Provide a 'Riddle' paragraphs type.
 package: Paragraphs Types
 type: module

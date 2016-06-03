@@ -2,11 +2,11 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.riddle_marketplace.field_link
-    - paragraphs.paragraphs_type.riddle_marketplace
+    - field.field.paragraph.paragraphs_riddle_marketplace.field_link
+    - paragraphs.paragraphs_type.paragraphs_riddle_marketplace
   module:
-    - link
-id: paragraph.riddle_marketplace.default
+    - paragraphs_riddle_marketplace
+id: paragraph.paragraphs_riddle_marketplace.default
 targetEntityType: paragraph
 bundle: paragraphs_riddle_marketplace
 mode: default
@@ -14,10 +14,11 @@ content:
   field_link:
     weight: 0
     settings:
-      placeholder_url: ''
-      placeholder_title: 'Enter Riddle URL'
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
+    type: riddle_url_field_widget
 hidden:
   created: true
+  status: true
   uid: true

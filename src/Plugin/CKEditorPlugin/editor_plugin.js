@@ -75,7 +75,7 @@ CKEDITOR.plugins.add( 'RiddleButton', {
 			var output = [];
 			riddles.forEach(function(riddle)
 			{
-				var title = riddle.data.title;
+				var title = riddle.title;
 				if (!title)
 					title = "Riddle " + riddle.uid;
 				var html = "";
