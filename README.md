@@ -1,8 +1,6 @@
 Riddle - Quizzes, lists polls and more
 ======================================
 
-
-
 Enabling Riddles in the Text Editor:
 ------------------------------------
 ** note: Riddles only show when in FULL HTML editing mode **
