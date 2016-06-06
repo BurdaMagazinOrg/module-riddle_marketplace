@@ -11,8 +11,8 @@ language: php
 sudo: false
 
 php:
-#  - 5.5
-#  - 5.6
+  - 5.5
+  - 5.6
   - 7
 
 # match drupal style dev branches and release tags (8.x-1.x or 8.x-1.0)
