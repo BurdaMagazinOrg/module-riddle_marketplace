@@ -61,9 +61,26 @@ class RiddleUrlAutocompleteController extends ControllerBase {
    */
   public function autocomplete(Request $request) {
     $typedRiddleTitle = $request->query->get('q');
-
-    $matches = array();
     $riddleFeed = $this->riddleFeedService->getFeed();
+
+    return new JsonResponse($this->getMatchList($typedRiddleTitle, $riddleFeed));
+  }
+
+  /**
+   * get filtered list of Riddle Titles
+   *
+   * @param string $typedRiddleTitle
+   *   Search text to match Riddle Title
+   *
+   * @param $riddleFeed
+   *   Feed provided by Riddle Feed Service
+   *
+   * @return array List of matched Riddle Titles
+   * List of matched Riddle Titles
+   */
+  private function getMatchList($typedRiddleTitle, $riddleFeed) {
+    $matches = array();
+
     foreach ($riddleFeed as $feedEntry) {
       if (stripos($feedEntry['title'], $typedRiddleTitle) !== FALSE) {
         $riddleUrl = str_replace(
@@ -77,7 +94,7 @@ class RiddleUrlAutocompleteController extends ControllerBase {
       }
     }
 
-    return new JsonResponse($matches);
+    return $matches;
   }
 
 }

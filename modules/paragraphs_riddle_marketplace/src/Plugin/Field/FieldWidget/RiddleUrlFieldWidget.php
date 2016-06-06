@@ -47,8 +47,6 @@ class RiddleUrlFieldWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-//    $element = [];
-
     $element['uri'] = $element + array(
         '#type' => 'textfield',
         '#default_value' => isset($items[$delta]->uri) ? $items[$delta]->uri : NULL,

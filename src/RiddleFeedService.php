@@ -3,6 +3,7 @@
 namespace Drupal\riddle_marketplace;
 
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\TypedData\DataDefinition;
 
 /**
  * Class RiddleFeedService.
@@ -28,7 +29,14 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   private static $cachePeriod = '30 seconds';
 
   /**
+   * Generic name used for Riddles without defined title
    *
+   * @var string
+   */
+  private static $genericNamePrefix = 'Riddle ';
+
+  /**
+   * Riddle Feed Service
    *
    * Constructor
    */
@@ -37,6 +45,8 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   }
 
   /**
+   * {@inheritdoc}
+   *
    * @return array|null
    */
   public function getFeed() {
@@ -49,18 +59,19 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
       $feed = $cache->data;
     }
     else {
-      $feed = $this->fetchFeed($token);
+      $riddleResponse = $this->fetchRiddleResponse($token);
+      $feed = $this->processRiddleResponse($riddleResponse);
+      $cacheExpire = $this->getCacheExpireTimestamp();
 
-      $date = new DrupalDateTime();
-      $date->modify('+' . static::$cachePeriod);
-
-      $this->cacheService->set($cacheId, $feed, $date->getTimestamp());
+      $this->cacheService->set($cacheId, $feed, $cacheExpire);
     }
 
     return $feed;
   }
 
   /**
+   * get Riddle Token from riddle_marketplace settings
+   *
    * @return mixed
    */
   private function getToken() {
@@ -71,13 +82,13 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   }
 
   /**
-   * fetch feed from Riddle API and return only relevant data
-   * - currently: uid, title
+   * fetch feed from Riddle API and return in JSON format (array)
    *
    * @param $token
+   *
    * @return array
    */
-  private function fetchFeed($token) {
+  private function fetchRiddleResponse($token) {
     $url = 'https://www.riddle.com/apiv3/item/token/' . $token . "?client=d8";
 
     $ch = curl_init();
@@ -85,17 +96,48 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-    $file_contents = curl_exec($ch);
+    $result = curl_exec($ch);
     curl_close($ch);
 
-    // process response from Riddle
-    $riddleResponse = json_decode($file_contents, TRUE);
+    // return response from Riddle
+    return json_decode($result, TRUE);
+  }
 
+  /**
+   * process response from Riddle API (JSON format)
+   * and return only relevant data for internal feed cached storage
+   *
+   * - currently: uid, title
+   *
+   * @param array|NULL $riddleResponse
+   *
+   * @return array
+   */
+  private function processRiddleResponse($riddleResponse) {
     $feed = array();
+
     if (!empty($riddleResponse) && is_array($riddleResponse)) {
       foreach ($riddleResponse as $riddleEntry) {
+
+        // check is entry valid - TODO: improve validation
+        if (
+          empty($riddleEntry) || !is_array($riddleEntry)
+          || empty($riddleEntry['data']) || !is_array($riddleEntry['data'])
+          || empty($riddleEntry['uid'])
+        ) {
+          continue;
+        }
+
+        // get title if it's defined - otherwise use Generic names
+        if (!empty($riddleEntry['data']['title'])) {
+          $title = $riddleEntry['data']['title'];
+        }
+        else {
+          $title = static::$genericNamePrefix . $riddleEntry['uid'];
+        }
+
         $feed[] = array(
-          'title' => $riddleEntry['data']['title'],
+          'title' => $title,
           'uid' => $riddleEntry['uid'],
         );
       }
@@ -104,4 +146,15 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
     return $feed;
   }
 
+  /**
+   * get cache validity end timestamp
+   *
+   * @return mixed
+   */
+  private function getCacheExpireTimestamp() {
+    $date = new DrupalDateTime();
+    $date->modify('+' . static::$cachePeriod);
+
+    return $date->getTimestamp();
+  }
 }
