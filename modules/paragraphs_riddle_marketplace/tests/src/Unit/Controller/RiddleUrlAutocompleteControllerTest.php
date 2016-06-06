@@ -125,7 +125,7 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
         'uid' => '2',
       ),
       array(
-        'title' => 'Test FAIL',
+        'title' => 'TiTlE',
         'uid' => '3',
       ),
     );

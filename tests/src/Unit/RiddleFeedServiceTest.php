@@ -99,7 +99,7 @@ class RiddleFeedServiceTest extends UnitTestCase {
     $riddleFeed = array(
       array(
         'data' => array(
-          'title' => 'Test FAIL'
+          'title' => ''
         ),
         'uid' => '1',
       ),
