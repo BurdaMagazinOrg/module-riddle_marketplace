@@ -12,7 +12,7 @@ sudo: false
 
 php:
 #  - 5.5
-  - 5.6
+#  - 5.6
   - 7
 
 # match drupal style dev branches and release tags (8.x-1.x or 8.x-1.0)
@@ -89,12 +89,12 @@ env:
 
   matrix:
     # [[[ SELECT ANY OR MORE OPTIONS ]]]
-    - DRUPAL_TI_RUNNERS="phpunit"
+    #- DRUPAL_TI_RUNNERS="phpunit"
     #- DRUPAL_TI_RUNNERS="simpletest"
     #- DRUPAL_TI_RUNNERS="behat"
     #- DRUPAL_TI_RUNNERS="phpunit simpletest behat"
     # Use phpunit-core to test modules with phpunit with Drupal 8 core.
-    #- DRUPAL_TI_RUNNERS="phpunit-core"
+    - DRUPAL_TI_RUNNERS="phpunit-core"
 
 mysql:
   database: drupal_travis_db
