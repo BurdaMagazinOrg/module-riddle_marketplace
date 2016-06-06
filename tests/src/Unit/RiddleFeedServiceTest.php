@@ -7,7 +7,9 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\riddle_marketplace\RiddleFeedService;
 
 /**
- * Provides automated tests for the paragraphs_riddle_marketplace module.
+ * Provides automated tests for the riddle_marketplace module.
+ * 
+ * And RiddleFeedService class.
  */
 class RiddleFeedServiceTest extends UnitTestCase {
 

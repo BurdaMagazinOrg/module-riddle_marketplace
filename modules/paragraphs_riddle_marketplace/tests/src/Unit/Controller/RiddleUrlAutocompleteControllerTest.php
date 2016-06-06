@@ -7,6 +7,8 @@ use Drupal\paragraphs_riddle_marketplace\Controller\RiddleUrlAutocompleteControl
 
 /**
  * Provides automated tests for the paragraphs_riddle_marketplace module.
+ * 
+ * And RiddleUrlAutocompleteController class.
  */
 class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
 
