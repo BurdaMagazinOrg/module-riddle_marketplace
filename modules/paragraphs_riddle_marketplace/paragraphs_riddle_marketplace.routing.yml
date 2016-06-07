@@ -5,4 +5,4 @@ paragraphs_riddle_marketplace.riddle_url_autocomplete_controller_autocomplete:
     _controller: '\Drupal\paragraphs_riddle_marketplace\Controller\RiddleUrlAutocompleteController::autocomplete'
     _title: 'autocomplete'
   requirements:
-    _permission: 'access content'
+    _permission: 'administer nodes'
