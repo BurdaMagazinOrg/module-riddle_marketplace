@@ -3,14 +3,25 @@
 namespace Drupal\Tests\paragraphs_riddle_marketplace\Unit\Controller;
 
 use Drupal\Tests\UnitTestCase;
+use Drupal\Core\Config\Config;
 use Drupal\paragraphs_riddle_marketplace\Controller\RiddleUrlAutocompleteController;
 
 /**
  * Provides automated tests for the paragraphs_riddle_marketplace module.
- * 
+ *
  * And RiddleUrlAutocompleteController class.
  */
 class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
+
+  /**
+   * riddle marketplace Feed Service Mock
+   */
+  protected $riddleFeedServiceMock;
+
+  /**
+   * Config Factory Mock -> provides base configuration requred for Testing
+   */
+  protected $configFactoryMock;
 
   /**
    * {@inheritdoc}
@@ -28,6 +39,26 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
    */
   public function setUp() {
     parent::setUp();
+
+    $this->riddleFeedServiceMock = $this->getMock('Drupal\riddle_marketplace\RiddleFeedServiceInterface');
+    $this->setUpConfigFactoryMock();
+  }
+
+  /**
+   * setup Config relevant for proper functioning of tests
+   */
+  protected function setUpConfigFactoryMock() {
+    $this->configFactoryMock = $this->getMock('\Drupal\Core\Config\ConfigFactoryInterface');
+
+    $storage = $this->getMock('Drupal\Core\Config\StorageInterface');
+    $event_dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+    $typed_config = $this->getMock('Drupal\Core\Config\TypedConfigManagerInterface');
+    $config = new Config('riddle_marketplace', $storage, $event_dispatcher, $typed_config);
+    $config->set('riddle_marketplace.url', 'https://www.riddle.com/a/%%RIDDLE_UID%%');
+
+    $this->configFactoryMock->expects($this->once())
+      ->method('get')
+      ->willReturn($config);
   }
 
   /**
@@ -72,8 +103,7 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
    * @param array $expected
    */
   public function testGetMatchList($query, $feed, $expected) {
-    $riddleFeedServiceMock = $this->getMock('Drupal\riddle_marketplace\RiddleFeedServiceInterface');
-    $controller = new RiddleUrlAutocompleteController($riddleFeedServiceMock);
+    $controller = new RiddleUrlAutocompleteController($this->riddleFeedServiceMock, $this->configFactoryMock);
 
     $matchedList = $this->executeMethod($controller, 'getMatchList', array(
       $query,
@@ -86,8 +116,7 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
    * Tests getMatchList method functionality with changed URL Template
    */
   public function testGetMatchListChangedRiddleUrlTemplate() {
-    $riddleFeedServiceMock = $this->getMock('Drupal\riddle_marketplace\RiddleFeedServiceInterface');
-    $controller = new RiddleUrlAutocompleteController($riddleFeedServiceMock);
+    $controller = new RiddleUrlAutocompleteController($this->riddleFeedServiceMock, $this->configFactoryMock);
 
     $this->setProperty($controller, 'riddleUrlTemplate', 'https://www.test.com/a/%%RIDDLE_UID%%');
     $matchedList = $this->executeMethod($controller, 'getMatchList', array(

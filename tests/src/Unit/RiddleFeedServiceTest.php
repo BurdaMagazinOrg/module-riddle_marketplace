@@ -3,15 +3,26 @@
 namespace Drupal\Tests\riddle_marketplace\Unit;
 
 use Drupal\Tests\UnitTestCase;
+use Drupal\Core\Config\Config;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\riddle_marketplace\RiddleFeedService;
 
 /**
  * Provides automated tests for the riddle_marketplace module.
- * 
+ *
  * And RiddleFeedService class.
  */
 class RiddleFeedServiceTest extends UnitTestCase {
+
+  /**
+   * Cache Service Mock
+   */
+  protected $cacheServiceMock;
+
+  /**
+   * Config Factory Mock -> provides base configuration requred for Testing
+   */
+  protected $configFactoryMock;
 
   /**
    * {@inheritdoc}
@@ -30,14 +41,33 @@ class RiddleFeedServiceTest extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $container = new ContainerBuilder();
+    $this->cacheServiceMock = $this->getMock('Drupal\Core\Cache\CacheBackendInterface');
+    $this->setUpConfigFactoryMock();
 
+    $container = new ContainerBuilder();
     $container->set(
       'cache.riddle_feed',
       $this->getMock('\Drupal\Core\Cache\CacheBackendInterface')
     );
 
     \Drupal::setContainer($container);
+  }
+
+  /**
+   * setup Config relevant for proper functioning of tests
+   */
+  protected function setUpConfigFactoryMock() {
+    $this->configFactoryMock = $this->getMock('\Drupal\Core\Config\ConfigFactoryInterface');
+
+    $storage = $this->getMock('Drupal\Core\Config\StorageInterface');
+    $event_dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+    $typed_config = $this->getMock('Drupal\Core\Config\TypedConfigManagerInterface');
+    $config = new Config('riddle_marketplace', $storage, $event_dispatcher, $typed_config);
+    $config->set('riddle_marketplace.empty_title_prefix', 'Riddle ');
+
+    $this->configFactoryMock->expects($this->once())
+      ->method('get')
+      ->willReturn($config);
   }
 
   /**
@@ -81,7 +111,7 @@ class RiddleFeedServiceTest extends UnitTestCase {
    * @param array $expected
    */
   public function testProcessRiddleResponse($riddleResponse, $expected) {
-    $feedService = new RiddleFeedService();
+    $feedService = new RiddleFeedService($this->cacheServiceMock, $this->configFactoryMock);
 
     $feed = $this->executeMethod(
       $feedService,

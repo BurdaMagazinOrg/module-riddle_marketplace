@@ -20,10 +20,11 @@ class RiddleUrlAutocompleteController extends ControllerBase {
 
   /**
    * Riddle URL template
+   * -> it's defined in riddle_marketplace.settings->riddle_marketplace.url
    *
    * @var string
    */
-  private static $riddleUrlTemplate = 'https://www.riddle.com/a/%%RIDDLE_UID%%';
+  private $riddleUrlTemplate;
 
   /**
    * @var \Drupal\riddle_marketplace\RiddleFeedServiceInterface
@@ -34,9 +35,14 @@ class RiddleUrlAutocompleteController extends ControllerBase {
    * RiddleUrlAutocompleteController constructor.
    *
    * @param $riddleFeedService
+   * @param $configService
    */
-  public function __construct($riddleFeedService) {
+  public function __construct($riddleFeedService, $configService) {
     $this->riddleFeedService = $riddleFeedService;
+
+    // fetch and store settings for this module
+    $riddleSettings = $configService->get('riddle_marketplace.settings');
+    $this->riddleUrlTemplate = $riddleSettings->get('riddle_marketplace.url');
   }
 
   /**
@@ -46,7 +52,8 @@ class RiddleUrlAutocompleteController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('riddle_marketplace.feed')
+      $container->get('riddle_marketplace.feed'),
+      $container->get('config.factory')
     );
   }
 
@@ -86,7 +93,7 @@ class RiddleUrlAutocompleteController extends ControllerBase {
         $riddleUrl = str_replace(
           array('%%RIDDLE_UID%%'),
           array($feedEntry['uid']),
-          static::$riddleUrlTemplate
+          $this->riddleUrlTemplate
         );
         $riddleTitle = Html::escape($feedEntry['title']);
 

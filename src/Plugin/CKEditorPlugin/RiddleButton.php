@@ -25,7 +25,32 @@ use Drupal\ckeditor\CKEditorPluginBase;
 class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface, CKEditorPluginButtonsInterface {
 
   /**
+   * @var \Drupal\riddle_marketplace\RiddleFeedServiceInterface
+   */
+  private $riddleFeedService;
+
+  /**
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  private $moduleSettings;
+
+  /**
+   * RiddleButton constructor.
+   *
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->riddleFeedService = \Drupal::service('riddle_marketplace.feed');
+    $this->moduleSettings = \Drupal::service('config.factory')
+      ->get('riddle_marketplace.settings');
+  }
+
+  /**
    * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::getDependencies().
+   *
+   * {@inheritdoc}
    */
   function getDependencies(Editor $editor) {
     return array();
@@ -33,6 +58,8 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
 
   /**
    * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::getLibraries().
+   *
+   * {@inheritdoc}
    */
   function getLibraries(Editor $editor) {
     return array();
@@ -70,11 +97,14 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
 
   /**
    * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::getConfig().
+   *
+   * {@inheritdoc}
    */
   public function getConfig(Editor $editor) {
-    $riddleFeedService = \Drupal::service('riddle_marketplace.feed');
-
-    return array('data' => json_encode($riddleFeedService->getFeed()));
+    return array(
+      'data' => json_encode($this->riddleFeedService->getFeed()),
+      'riddle_url' => $this->moduleSettings->get('riddle_marketplace.url'),
+    );
   }
 
   /**
