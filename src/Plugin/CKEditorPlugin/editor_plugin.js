@@ -16,6 +16,9 @@ CKEDITOR.plugins.add( 'RiddleButton', {
 		var config = editor.config;
 		var riddles = JSON.parse(config.data);
 
+		// Riddle URL template contains custom macro %%RIDDLE_UID%% - and that should be replaced with correct uid
+		var riddleUrlTemplate = config.riddle_url + '?fixed';
+
         // add the button with the dir path so we can find the icon
         if ( !CKEDITOR.env.hc ) {
             var icon = this.path +"images/riddle.jpg";
@@ -50,11 +53,10 @@ CKEDITOR.plugins.add( 'RiddleButton', {
 				},
 
 				refresh: function () {
-
-				},
+				}
 
 			});
-		};
+		}
 
         // build the list of the dropdown menu contents. This is a html list with click events
 		function renderRiddleList( panel ) {
@@ -65,7 +67,8 @@ CKEDITOR.plugins.add( 'RiddleButton', {
 				editor.focus();
 				panel.hide();
 				editor.fire( 'saveSnapshot' );
-                var html = '<iframe width="100%" height="600" frameborder="0" src="https://www.riddle.com/a/'+riddleId+'?fixed"></iframe>';
+				var riddleUrl = riddleUrlTemplate.replace('%%RIDDLE_UID%%', riddleId);
+                var html = '<iframe width="100%" height="600" frameborder="0" src="'+riddleUrl+'"></iframe>';
                 editor.insertHtml(html);
 				editor.fire( 'saveSnapshot' );
 			});
@@ -75,7 +78,7 @@ CKEDITOR.plugins.add( 'RiddleButton', {
 			var output = [];
 			riddles.forEach(function(riddle)
 			{
-				var title = riddle.data.title;
+				var title = riddle.title;
 				if (!title)
 					title = "Riddle " + riddle.uid;
 				var html = "";
@@ -97,28 +100,29 @@ CKEDITOR.plugins.add( 'RiddleButton', {
         //TODO: store the shortcode config inside a configfile or pull it from riddle.com to keep it synced
         editor.on( 'paste', function( evt ) {
             var data = evt.data.dataValue;
+			var riddleUrl;
 
             // check if its a riddle by scanning for the following string
             var tag = '[riddle=';
             var idIndex = data.indexOf(tag);
-            var riddleId = -1;
+            var riddleId = '';
             // if the string exists then search for the riddle id, ie [riddle=1823] => 1823
             if (data.indexOf(idIndex > -1)) {
                 riddleId = data.substring(tag.length, data.length - 1);
             }
 
-            if (riddleId != -1) {
+            if (riddleId != '') {
                 // swap out the shortcode with a riddle embed
                 // TODO SEO code needed ( as above )
-                data = '<iframe width="100%" height="600" frameborder="0" src="https://www.riddle.com/a/' + riddleId + '?fixed"></iframe>';
+				riddleUrl = riddleUrlTemplate.replace('%%RIDDLE_UID%%', riddleId);
+                data = '<iframe width="100%" height="600" frameborder="0" src="'+riddleUrl+'"></iframe>';
             }
             // update the data going back into CKE
             evt.data.dataValue = data;
         } );
-    }
+    },
 
-
-	,onLoad: function() {
+	onLoad: function() {
         //setup a function to popup the list of riddles
 		function clickFn( editor ) {
 			var _ = this._;

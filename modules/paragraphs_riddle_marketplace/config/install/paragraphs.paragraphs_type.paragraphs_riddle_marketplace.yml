@@ -2,4 +2,4 @@ langcode: en
 status: true
 dependencies: {  }
 id: paragraphs_riddle_marketplace
-label: Riddle Url
+label: 'Riddle'
