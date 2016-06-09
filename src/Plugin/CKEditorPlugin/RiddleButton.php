@@ -9,9 +9,7 @@ namespace Drupal\riddle_marketplace\Plugin\CKEditorPlugin;
 
 use Drupal\ckeditor\CKEditorPluginInterface;
 use Drupal\ckeditor\CKEditorPluginButtonsInterface;
-use Drupal\Component\Plugin\PluginBase;
 use Drupal\editor\Entity\Editor;
-use Drupal\Core\Url;
 use Drupal\ckeditor\CKEditorPluginBase;
 
 /**
@@ -25,7 +23,32 @@ use Drupal\ckeditor\CKEditorPluginBase;
 class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface, CKEditorPluginButtonsInterface {
 
   /**
+   * @var \Drupal\riddle_marketplace\RiddleFeedServiceInterface
+   */
+  private $riddleFeedService;
+
+  /**
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  private $moduleSettings;
+
+  /**
+   * RiddleButton constructor.
+   *
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->riddleFeedService = \Drupal::service('riddle_marketplace.feed');
+    $this->moduleSettings = \Drupal::service('config.factory')
+      ->get('riddle_marketplace.settings');
+  }
+
+  /**
    * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::getDependencies().
+   *
+   * {@inheritdoc}
    */
   function getDependencies(Editor $editor) {
     return array();
@@ -33,6 +56,8 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
 
   /**
    * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::getLibraries().
+   *
+   * {@inheritdoc}
    */
   function getLibraries(Editor $editor) {
     return array();
@@ -70,22 +95,14 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
 
   /**
    * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::getConfig().
+   *
+   * {@inheritdoc}
    */
   public function getConfig(Editor $editor) {
-
-    $config = \Drupal::service('config.factory')->getEditable('riddle_marketplace.settings');
-    $token = $config->get('riddle_marketplace.token');
-    $url= 'https://www.riddle.com/apiv3/item/token/' . $token . "?client=d8";
-
-    $ch = curl_init();
-    $timeout = 0; // set to zero for no timeout
-    curl_setopt ($ch, CURLOPT_URL, $url);
-    curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-    $file_contents = curl_exec($ch);
-    curl_close($ch);
-
-    return array('data'=>$file_contents);
+    return array(
+      'data' => json_encode($this->riddleFeedService->getFeed()),
+      'riddle_url' => $this->moduleSettings->get('riddle_marketplace.url'),
+    );
   }
 
   /**
