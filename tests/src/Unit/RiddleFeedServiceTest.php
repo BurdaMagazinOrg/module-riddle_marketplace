@@ -20,7 +20,7 @@ class RiddleFeedServiceTest extends UnitTestCase {
   protected $cacheServiceMock;
 
   /**
-   * Config Factory Mock -> provides base configuration requred for Testing
+   * Config Factory Mock -> provides base configuration required for Testing
    */
   protected $configFactoryMock;
 

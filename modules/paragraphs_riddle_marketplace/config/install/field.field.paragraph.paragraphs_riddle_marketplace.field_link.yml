@@ -10,7 +10,7 @@ id: paragraph.paragraphs_riddle_marketplace.field_link
 field_name: field_link
 entity_type: paragraph
 bundle: paragraphs_riddle_marketplace
-label: 'Riddle URL'
+label: 'Riddle'
 description: ''
 required: false
 translatable: true

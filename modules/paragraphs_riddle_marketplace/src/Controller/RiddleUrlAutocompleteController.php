@@ -5,11 +5,9 @@ namespace Drupal\paragraphs_riddle_marketplace\Controller;
 use Drupal\Core\Controller\ControllerBase;
 
 use Drupal\Component\Utility\Html;
-use Drupal\hal\Encoder\JsonEncoder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Serializer\Encoder\JsonDecode;
 
 /**
  * Class RiddleUrlAutocompleteController.

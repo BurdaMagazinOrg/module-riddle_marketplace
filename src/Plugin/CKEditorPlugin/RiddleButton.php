@@ -9,9 +9,7 @@ namespace Drupal\riddle_marketplace\Plugin\CKEditorPlugin;
 
 use Drupal\ckeditor\CKEditorPluginInterface;
 use Drupal\ckeditor\CKEditorPluginButtonsInterface;
-use Drupal\Component\Plugin\PluginBase;
 use Drupal\editor\Entity\Editor;
-use Drupal\Core\Url;
 use Drupal\ckeditor\CKEditorPluginBase;
 
 /**

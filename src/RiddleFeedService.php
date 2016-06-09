@@ -2,8 +2,6 @@
 
 namespace Drupal\riddle_marketplace;
 
-use Drupal\Core\Config\FileStorage;
-use Drupal\Core\Config\InstallStorage;
 use Drupal\Core\Datetime\DrupalDateTime;
 use GuzzleHttp\Client;
 

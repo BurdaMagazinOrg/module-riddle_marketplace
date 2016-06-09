@@ -19,7 +19,7 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
   protected $riddleFeedServiceMock;
 
   /**
-   * Config Factory Mock -> provides base configuration requred for Testing
+   * Config Factory Mock -> provides base configuration required for Testing
    */
   protected $configFactoryMock;
 
