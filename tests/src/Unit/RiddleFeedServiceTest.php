@@ -11,6 +11,8 @@ use Drupal\riddle_marketplace\RiddleFeedService;
  * Provides automated tests for the riddle_marketplace module.
  *
  * And RiddleFeedService class.
+ *
+ * @group riddle_marketplace
  */
 class RiddleFeedServiceTest extends UnitTestCase {
 
@@ -31,7 +33,6 @@ class RiddleFeedServiceTest extends UnitTestCase {
     return array(
       'name' => "RiddleFeedService's controller functionality",
       'description' => 'Test Unit for module riddle_marketplace and service RiddleFeedService.',
-      'group' => 'Other',
     );
   }
 

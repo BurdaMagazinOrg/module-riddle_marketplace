@@ -10,6 +10,8 @@ use Drupal\paragraphs_riddle_marketplace\Controller\RiddleUrlAutocompleteControl
  * Provides automated tests for the paragraphs_riddle_marketplace module.
  *
  * And RiddleUrlAutocompleteController class.
+ *
+ * @group riddle_marketplace
  */
 class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
 
@@ -30,7 +32,6 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
     return array(
       'name' => "RiddleUrlAutocompleteController's controller functionality",
       'description' => 'Test Unit for module paragraphs_riddle_marketplace and controller RiddleUrlAutocompleteController.',
-      'group' => 'Other',
     );
   }
 
