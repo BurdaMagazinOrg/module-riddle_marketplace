@@ -8,8 +8,8 @@ language: php
 sudo: false
 
 php:
-  - 5.5
-  - 5.6
+#  - 5.5
+#  - 5.6
   - 7
 
 env:
@@ -92,6 +92,11 @@ mysql:
 
 before_install:
   - composer self-update
+  - composer global require drupal/coder
+  - export PATH="$PATH:$HOME/.composer/vendor/bin"
+  - phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
+  - phpcs --standard=Drupal --report=summary -np .
+  - phpcs --standard=DrupalPractice --report=summary -np .
   - cd ./tests
   - composer global require "lionsad/drupal_ti:1.*"
   - drupal-ti before_install
