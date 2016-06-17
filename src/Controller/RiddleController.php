@@ -1,16 +1,22 @@
 <?php
-/**
- * @file
- * Contains \Drupal\riddle_marketplace\Controller\RiddleController.
- */
 
 namespace Drupal\riddle_marketplace\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 
+/**
+ * Class RiddleController.
+ *
+ * @package Drupal\riddle_marketplace\Controller
+ */
 class RiddleController extends ControllerBase {
 
-
+  /**
+   * Create Render array for riddle iframe.
+   *
+   * @return array
+   *   Render array for Riddle Iframe.
+   */
   public function riddleIframe() {
 
     $config = \Drupal::service('config.factory')->getEditable(
@@ -18,9 +24,10 @@ class RiddleController extends ControllerBase {
     );
     $token = $config->get('riddle_marketplace.token');
 
-   return [
+    return [
       '#theme' => 'riddle_backend',
       '#token' => $token,
     ];
   }
+
 }

@@ -2,12 +2,14 @@
 
 namespace Drupal\paragraphs_riddle_marketplace\Controller;
 
-use Drupal\Core\Controller\ControllerBase;
 
-use Drupal\Component\Utility\Html;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\riddle_marketplace\RiddleFeedServiceInterface;
 
 /**
  * Class RiddleUrlAutocompleteController.
@@ -17,14 +19,17 @@ use Symfony\Component\HttpFoundation\Request;
 class RiddleUrlAutocompleteController extends ControllerBase {
 
   /**
-   * Riddle URL template
-   * -> it's defined in riddle_marketplace.settings->riddle_marketplace.url
+   * Riddle URL template.
+   *
+   * It's defined in riddle_marketplace.settings->riddle_marketplace.url.
    *
    * @var string
    */
   private $riddleUrlTemplate;
 
   /**
+   * Riddle Feed Service property.
+   *
    * @var \Drupal\riddle_marketplace\RiddleFeedServiceInterface
    */
   private $riddleFeedService;
@@ -32,21 +37,21 @@ class RiddleUrlAutocompleteController extends ControllerBase {
   /**
    * RiddleUrlAutocompleteController constructor.
    *
-   * @param $riddleFeedService
-   * @param $configService
+   * @param \Drupal\riddle_marketplace\RiddleFeedServiceInterface $riddleFeedService
+   *   Riddle Feed Service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configService
+   *   Configuration Factory.
    */
-  public function __construct($riddleFeedService, $configService) {
+  public function __construct(RiddleFeedServiceInterface $riddleFeedService, ConfigFactoryInterface $configService) {
     $this->riddleFeedService = $riddleFeedService;
 
-    // fetch and store settings for this module
+    // Fetch and store settings for this module.
     $riddleSettings = $configService->get('riddle_marketplace.settings');
     $this->riddleUrlTemplate = $riddleSettings->get('riddle_marketplace.url');
   }
 
   /**
-   * @param ContainerInterface $container
-   *
-   * @return static
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -72,16 +77,15 @@ class RiddleUrlAutocompleteController extends ControllerBase {
   }
 
   /**
-   * get filtered list of Riddle Titles
+   * Get filtered list of Riddle Titles.
    *
    * @param string $typedRiddleTitle
-   *   Search text to match Riddle Title
-   *
-   * @param $riddleFeed
-   *   Feed provided by Riddle Feed Service
+   *   Search text to match Riddle Title.
+   * @param array $riddleFeed
+   *   Feed provided by Riddle Feed Service.
    *
    * @return array List of matched Riddle Titles
-   * List of matched Riddle Titles
+   *   List of matched Riddle Titles.
    */
   private function getMatchList($typedRiddleTitle, $riddleFeed) {
     $matches = array();

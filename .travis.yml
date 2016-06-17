@@ -99,11 +99,11 @@ before_install:
   - composer self-update
 
   # PHP Code Sniffer Check
-#  - composer global require drupal/coder
-#  - export PATH="$PATH:$HOME/.composer/vendor/bin"
-#  - phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
-#  - phpcs --standard=Drupal --report=summary -np .
-#  - phpcs --standard=DrupalPractice --report=summary -np .
+  - composer global require drupal/coder
+  - export PATH="$PATH:$HOME/.composer/vendor/bin"
+  - phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
+  - phpcs --standard=Drupal --report=summary -np .
+  - phpcs --standard=DrupalPractice --report=summary -np .
 
   # JS ESLint checking
   - npm install -g eslint
