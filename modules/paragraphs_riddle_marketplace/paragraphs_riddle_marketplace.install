@@ -1,27 +1,32 @@
 <?php
 
+/**
+ * @file
+ * Contains update hooks.
+ */
+
 use Drupal\Core\Config\InstallStorage;
 
 /**
- * Update paragraphs type Riddle and rename of labels for it
+ * Update paragraphs type Riddle and rename of labels for it.
  */
 function paragraphs_riddle_marketplace_update_8001() {
   $entityManager = \Drupal::service('entity.manager');
 
-  // IDs of entities that require update
+  // IDs of entities that require update.
   $fieldConfigId = 'paragraph.paragraphs_riddle_marketplace.field_link';
   $paragraphTypeId = 'paragraphs_riddle_marketplace';
 
-  // read config from file
+  // Read config from file.
   $fieldFormDisplayConfigYmlFilename = 'core.entity_form_display.paragraph.paragraphs_riddle_marketplace.default';
   $paragraphsTypeConfigYmlFilename = 'paragraphs.paragraphs_type.paragraphs_riddle_marketplace';
   $fieldConfigYmlFilename = 'field.field.paragraph.paragraphs_riddle_marketplace.field_link';
 
-  // field form display custom values
+  // Field form display custom values.
   $contentConfigName = 'content';
   $fieldName = 'field_link';
 
-  /**
+  /*
    * load configurations from file
    */
   $fieldFormDisplayConfigStorage = new InstallStorage();
@@ -61,7 +66,7 @@ function paragraphs_riddle_marketplace_update_8001() {
     return;
   }
 
-  /**
+  /*
    * update field configuration
    * - label and form display settings
    */
@@ -73,10 +78,10 @@ function paragraphs_riddle_marketplace_update_8001() {
       $storedField->set('label', $fieldConfigData['label'])
         ->save();
 
-      // properties used to find entity
+      // Properties used to find entity.
       $searchProperties = array(
         'targetEntityType' => $storedField->getTargetEntityTypeId(),
-        'bundle' => $storedField->getTargetBundle()
+        'bundle' => $storedField->getTargetBundle(),
       );
 
       if ($formDisplays = $entityManager
@@ -101,7 +106,7 @@ function paragraphs_riddle_marketplace_update_8001() {
       ->warning('Configuration for field_config not found: ' . $fieldConfigId);
   }
 
-  /**
+  /*
    * update paragraphs riddle market type label
    */
   if ($paragraphRiddleTypes = $entityManager
@@ -109,7 +114,7 @@ function paragraphs_riddle_marketplace_update_8001() {
     ->loadByProperties(array('id' => $paragraphTypeId))
   ) {
 
-    // update Paragraph Type Label
+    // Update Paragraph Type Label.
     foreach ($paragraphRiddleTypes as $paragraphRiddleType) {
       $paragraphRiddleType->set('label', $paragraphsTypeConfigData['label'])
         ->save();

@@ -1,6 +1,11 @@
 <?php
+
+/**
+ * @file
+ * Contains module hooks.
+ */
+
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\user\RoleInterface;
 
 /**
  * Implements hook_help().
@@ -18,11 +23,16 @@ function riddle_marketplace_help($route_name, RouteMatchInterface $route_match) 
   }
 }
 
+/**
+ * Implements hook_theme().
+ *
+ * @see hook_theme()
+ */
 function riddle_marketplace_theme() {
 
   $theme['riddle_backend'] = [
     'variables' => ['token' => NULL],
-    'template' => 'riddle-backend'
+    'template' => 'riddle-backend',
   ];
 
   return $theme;
