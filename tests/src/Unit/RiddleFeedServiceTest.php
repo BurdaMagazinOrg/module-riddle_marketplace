@@ -17,12 +17,12 @@ use Drupal\riddle_marketplace\RiddleFeedService;
 class RiddleFeedServiceTest extends UnitTestCase {
 
   /**
-   * Cache Service Mock
+   * Cache Service Mock.
    */
   protected $cacheServiceMock;
 
   /**
-   * Config Factory Mock -> provides base configuration required for Testing
+   * Config Factory Mock -> provides base configuration required for Testing.
    */
   protected $configFactoryMock;
 
@@ -55,7 +55,7 @@ class RiddleFeedServiceTest extends UnitTestCase {
   }
 
   /**
-   * setup Config relevant for proper functioning of tests
+   * Setup Config relevant for proper functioning of tests.
    */
   protected function setUpConfigFactoryMock() {
     $this->configFactoryMock = $this->getMock('\Drupal\Core\Config\ConfigFactoryInterface');
@@ -72,13 +72,17 @@ class RiddleFeedServiceTest extends UnitTestCase {
   }
 
   /**
-   * execute private/protected method
+   * Execute private/protected method.
    *
-   * @param $object
-   * @param $methodName
+   * @param object $object
+   *   Object used for execution of restricted method.
+   * @param string $methodName
+   *   Name of method that should be executed.
    * @param array $parameters
+   *   List of params that should be passed to method.
    *
    * @return mixed
+   *   Return result of method execution.
    */
   public function executeMethod(&$object, $methodName, array $parameters = array()) {
     $reflection = new \ReflectionClass(get_class($object));
@@ -89,11 +93,14 @@ class RiddleFeedServiceTest extends UnitTestCase {
   }
 
   /**
-   * set value for private/protected parameter
+   * Set value for private/protected parameter.
    *
-   * @param $object
-   * @param $name
-   * @param $value
+   * @param object $object
+   *   Object used to set parameter value on it.
+   * @param string $name
+   *   Name of restricted parameter.
+   * @param mixed $value
+   *   New value for parameter.
    */
   public function setProperty(&$object, $name, $value) {
     $reflection = new \ReflectionClass(get_class($object));
@@ -106,10 +113,12 @@ class RiddleFeedServiceTest extends UnitTestCase {
   /**
    * Tests basic processRiddleResponse method functionality.
    *
-   * @dataProvider processRiddleResponseDataProvider
-   *
    * @param array $riddleResponse
+   *   Test case of Riddle API response.
    * @param array $expected
+   *   Expected result of processRiddleResponse execution.
+   *
+   * @dataProvider processRiddleResponseDataProvider
    */
   public function testProcessRiddleResponse($riddleResponse, $expected) {
     $feedService = new RiddleFeedService($this->cacheServiceMock, $this->configFactoryMock);
@@ -124,27 +133,28 @@ class RiddleFeedServiceTest extends UnitTestCase {
   }
 
   /**
-   * Data provider for processRiddleResponse method related tests
+   * Data provider for processRiddleResponse method related tests.
    *
    * @return array
+   *   Return test cases for testProcessRiddleResponse.
    */
   public function processRiddleResponseDataProvider() {
     $riddleFeed = array(
       array(
         'data' => array(
-          'title' => ''
+          'title' => '',
         ),
         'uid' => '1',
       ),
       array(
         'data' => array(
-          'title' => 'Defined Title'
+          'title' => 'Defined Title',
         ),
         'uid' => '2',
       ),
       array(
         'data' => array(
-          'title' => 'No UID Title'
+          'title' => 'No UID Title',
         ),
         'uid' => '',
       ),

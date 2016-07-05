@@ -1,20 +1,15 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\riddle_marketplace\Form\SettingsForm.
- */
-
 namespace Drupal\riddle_marketplace\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a form that configures riddle_marketplace settings.
  */
 class SettingsForm extends ConfigFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -35,7 +30,6 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $settings->get('riddle_marketplace.token'),
     );
 
-
     return parent::buildForm($form, $form_state);
   }
 
@@ -45,10 +39,9 @@ class SettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
     $values = $form_state->getValues();
-    $config =$this->configFactory()->getEditable('riddle_marketplace.settings');
+    $config = $this->configFactory()->getEditable('riddle_marketplace.settings');
     $config->set('riddle_marketplace.token', $values['token'])->save();
   }
-
 
   /**
    * {@inheritdoc}
@@ -58,4 +51,5 @@ class SettingsForm extends ConfigFormBase {
       'riddle_marketplace.settings',
     ];
   }
+
 }

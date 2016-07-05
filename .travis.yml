@@ -8,9 +8,13 @@ language: php
 sudo: false
 
 php:
-  - 5.5
   - 5.6
   - 7
+
+addons:
+  apt:
+    packages:
+      - nodejs
 
 env:
   global:
@@ -92,6 +96,19 @@ mysql:
 
 before_install:
   - composer self-update
+
+  # PHP Code Sniffer Check
+  - composer global require drupal/coder
+  - export PATH="$PATH:$HOME/.composer/vendor/bin"
+  - phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
+  - phpcs --standard=Drupal --report=summary -p .
+  - phpcs --standard=DrupalPractice --report=summary -p .
+
+  # JS ESLint checking
+  - npm install -g eslint
+  - eslint .
+
+  # Continue with Drupal Tests
   - cd ./tests
   - composer global require "lionsad/drupal_ti:1.*"
   - drupal-ti before_install

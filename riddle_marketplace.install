@@ -1,9 +1,14 @@
 <?php
 
+/**
+ * @file
+ * Contains update hooks.
+ */
+
 use Drupal\Core\Config\InstallStorage;
 
 /**
- * Set all required config objects
+ * Set all required config objects.
  */
 function riddle_marketplace_update_8001() {
   $settingYmlFilename = 'riddle_marketplace.settings';
@@ -25,7 +30,7 @@ function riddle_marketplace_update_8001() {
       ->warning('Not existing configuration for module: ' . $moduleName);
   }
 
-  // check defined configuration keys from settings file
+  // Check defined configuration keys from settings file.
   $version8001Keys = array('api_url', 'url', 'empty_title_prefix');
   foreach ($sourceConfig as $sourceKey => $sourceValue) {
     if (in_array($sourceKey, $version8001Keys)) {

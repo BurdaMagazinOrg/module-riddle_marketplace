@@ -48,13 +48,13 @@ class RiddleUrlFieldWidget extends WidgetBase {
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element['uri'] = $element + array(
-        '#type' => 'textfield',
-        '#default_value' => isset($items[$delta]->uri) ? $items[$delta]->uri : NULL,
-        '#size' => $this->getSetting('size'),
-        '#placeholder' => $this->getSetting('placeholder'),
-        '#maxlength' => $this->getFieldSetting('max_length'),
-        '#autocomplete_route_name' => 'paragraphs_riddle_marketplace.riddle_url_autocomplete_controller_autocomplete',
-      );
+      '#type' => 'textfield',
+      '#default_value' => isset($items[$delta]->uri) ? $items[$delta]->uri : NULL,
+      '#size' => $this->getSetting('size'),
+      '#placeholder' => $this->getSetting('placeholder'),
+      '#maxlength' => $this->getFieldSetting('max_length'),
+      '#autocomplete_route_name' => 'paragraphs_riddle_marketplace.riddle_url_autocomplete_controller_autocomplete',
+    );
 
     return $element;
   }

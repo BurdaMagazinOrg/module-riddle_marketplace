@@ -12,7 +12,8 @@ interface RiddleFeedServiceInterface {
   /**
    * Return feed for configured Riddle Account (Token).
    *
-   * @return array
+   * @return array|null
+   *   Return feed from Riddle API Service or NULL if feed is not available.
    */
   public function getFeed();
 

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of \Drupal\riddle_marketplace\Plugin\CKEditorPlugin\RiddleButton.
- */
-
 namespace Drupal\riddle_marketplace\Plugin\CKEditorPlugin;
 
 use Drupal\ckeditor\CKEditorPluginInterface;
@@ -23,11 +18,15 @@ use Drupal\ckeditor\CKEditorPluginBase;
 class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface, CKEditorPluginButtonsInterface {
 
   /**
+   * Riddle Feed Service.
+   *
    * @var \Drupal\riddle_marketplace\RiddleFeedServiceInterface
    */
   private $riddleFeedService;
 
   /**
+   * Riddle Marketplace Module configuration.
+   *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
   private $moduleSettings;
@@ -46,42 +45,38 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
   }
 
   /**
-   * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::getDependencies().
-   *
    * {@inheritdoc}
    */
-  function getDependencies(Editor $editor) {
+  public function getDependencies(Editor $editor) {
     return array();
   }
 
   /**
-   * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::getLibraries().
-   *
    * {@inheritdoc}
    */
-  function getLibraries(Editor $editor) {
+  public  function getLibraries(Editor $editor) {
     return array();
 
   }
 
   /**
-   * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::isInternal().
+   * {@inheritdoc}
    */
-  function isInternal() {
+  public function isInternal() {
     return FALSE;
   }
 
   /**
-   * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::getFile().
+   * {@inheritdoc}
    */
-  function getFile() {
+  public function getFile() {
     return drupal_get_path('module', 'riddle_marketplace') . '/src/Plugin/CKEditorPlugin/editor_plugin.js';
   }
 
   /**
-   * Implements \Drupal\ckeditor\Plugin\CKEditorPluginButtonsInterface::getButtons().
+   * {@inheritdoc}
    */
-  function getButtons() {
+  public function getButtons() {
 
     return array(
       'RiddleButton' => array(
@@ -89,7 +84,7 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
         'image' => drupal_get_path('module', 'riddle_marketplace') . '/images/riddle.jpg',
         'image_alternative' => 'Riddles',
         'attributes' => array(),
-      )
+      ),
     );
   }
 
@@ -123,6 +118,7 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
    *   plugin manager.
    */
   public function getPluginDefinition() {
-    // TODO: Implement getPluginDefinition() method.
+    return array();
   }
+
 }
