@@ -143,7 +143,7 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
    * for internal feed cached storage.
    * - currently: uid, title.
    *
-   * @param array|NULL $riddleResponse
+   * @param array|null $riddleResponse
    *   JSON or NULL as Riddle API Result.
    *
    * @return array

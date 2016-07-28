@@ -2,7 +2,6 @@
 
 namespace Drupal\paragraphs_riddle_marketplace\Controller;
 
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
