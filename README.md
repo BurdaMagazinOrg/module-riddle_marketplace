@@ -6,7 +6,7 @@ Enabling Riddles in the Text Editor:
 ** note: Riddles only show when in FULL HTML editing mode **
 
 1. Prepare the module by unzipping in /modules/riddle_marketplace directory
-2. Goto Riddle.com and get a token from the Account->Token page ( you may need to reset to get the first token )
+2. Goto Riddle.com and get a token from the Account->Token page ( you may need to reset to get the first token ). To get a free riddle basic account use this voucher "THUNDER_3eX4_freebasic".
 3. Copy the token into /modules/riddle_marketplace/config/install/riddle_marketplace.settings.yml
 4. Goto Drupal admin and enable the module in the Admin/Extend menu.
 5. Enable the CKeditor plugin in the Admin/Content Authoring menu.
