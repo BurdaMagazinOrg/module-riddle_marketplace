@@ -83,7 +83,7 @@ class RiddleUrlAutocompleteController extends ControllerBase {
    * @param array $riddleFeed
    *   Feed provided by Riddle Feed Service.
    *
-   * @return array List of matched Riddle Titles
+   * @return array
    *   List of matched Riddle Titles.
    */
   private function getMatchList($typedRiddleTitle, $riddleFeed) {
