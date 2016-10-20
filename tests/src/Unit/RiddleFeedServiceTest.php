@@ -18,11 +18,15 @@ class RiddleFeedServiceTest extends UnitTestCase {
 
   /**
    * Cache Service Mock.
+   *
+   * @var \Drupal\Core\Cache\CacheBackendInterface
    */
   protected $cacheServiceMock;
 
   /**
    * Config Factory Mock -> provides base configuration required for Testing.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactoryMock;
 

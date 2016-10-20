@@ -17,11 +17,15 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
 
   /**
    * Riddle marketplace Feed Service Mock.
+   *
+   * @var \Drupal\riddle_marketplace\RiddleFeedServiceInterface
    */
   protected $riddleFeedServiceMock;
 
   /**
    * Config Factory Mock -> provides base configuration required for Testing.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactoryMock;
 

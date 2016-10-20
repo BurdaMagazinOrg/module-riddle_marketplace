@@ -19,7 +19,7 @@ class RiddleController extends ControllerBase {
    */
   public function riddleIframe() {
 
-    $config = \Drupal::service('config.factory')->getEditable(
+    $config = $this->config(
       'riddle_marketplace.settings'
     );
     $token = $config->get('riddle_marketplace.token');
