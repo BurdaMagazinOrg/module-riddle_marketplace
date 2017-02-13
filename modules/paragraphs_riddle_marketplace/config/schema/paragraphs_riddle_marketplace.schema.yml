@@ -1,0 +1,10 @@
+field.widget.settings.riddle_url_field_widget:
+  type: mapping
+  label: 'Riddle link field widget'
+  mapping:
+    size:
+      type: integer
+      label: 'Size of link field'
+    placeholder:
+      type: label
+      label: 'Placeholder'

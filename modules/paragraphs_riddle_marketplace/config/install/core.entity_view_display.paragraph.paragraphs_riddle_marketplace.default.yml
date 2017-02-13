@@ -14,6 +14,7 @@ content:
   field_link:
     weight: 0
     label: above
+    region: content
     settings:
       trim_length: 80
       url_only: false

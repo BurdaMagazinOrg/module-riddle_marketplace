@@ -13,6 +13,7 @@ mode: default
 content:
   field_link:
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''

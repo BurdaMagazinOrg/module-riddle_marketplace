@@ -80,7 +80,7 @@ class RiddleUrlAutocompleteController extends ControllerBase {
    *
    * @param string $typedRiddleTitle
    *   Search text to match Riddle Title.
-   * @param array $riddleFeed
+   * @param array|null $riddleFeed
    *   Feed provided by Riddle Feed Service.
    *
    * @return array
@@ -89,7 +89,8 @@ class RiddleUrlAutocompleteController extends ControllerBase {
   private function getMatchList($typedRiddleTitle, $riddleFeed) {
     $matches = array();
 
-    foreach ($riddleFeed as $feedEntry) {
+    // Cast to array, in case feed is NULL.
+    foreach ((array) $riddleFeed as $feedEntry) {
       if (stripos($feedEntry['title'], $typedRiddleTitle) !== FALSE) {
         $riddleUrl = str_replace(
           array('%%RIDDLE_UID%%'),
