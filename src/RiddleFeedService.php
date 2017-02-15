@@ -75,8 +75,6 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
    * {@inheritdoc}
    */
   public function getFeed() {
-    $feed = NULL;
-
     $token = $this->getToken();
     $cacheId = 'riddle_marketplace.feed:' . $token;
 
@@ -172,7 +170,7 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   /**
    * Validation Riddle Feed Entry.
    *
-   * @param array $riddleEntry
+   * @param array|null $riddleEntry
    *   Single Riddle Feed Entry.
    *
    * @return bool
@@ -202,7 +200,7 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
    * @return string
    *   Riddle element title.
    */
-  private function getRiddleTitle($riddleEntry) {
+  private function getRiddleTitle(array $riddleEntry) {
     if (!empty($riddleEntry['data']['title'])) {
       return $riddleEntry['data']['title'];
     }

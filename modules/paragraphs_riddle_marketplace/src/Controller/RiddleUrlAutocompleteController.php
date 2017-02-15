@@ -86,7 +86,7 @@ class RiddleUrlAutocompleteController extends ControllerBase {
    * @return array
    *   List of matched Riddle Titles.
    */
-  private function getMatchList($typedRiddleTitle, $riddleFeed) {
+  private function getMatchList($typedRiddleTitle, array $riddleFeed) {
     $matches = array();
 
     foreach ($riddleFeed as $feedEntry) {

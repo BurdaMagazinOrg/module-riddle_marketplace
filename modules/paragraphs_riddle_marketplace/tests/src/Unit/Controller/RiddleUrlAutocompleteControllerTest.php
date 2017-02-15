@@ -117,7 +117,7 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
    *
    * @dataProvider getMatchListDataProvider
    */
-  public function testGetMatchList($query, $feed, $expected) {
+  public function testGetMatchList($query, array $feed, array $expected) {
     $controller = new RiddleUrlAutocompleteController($this->riddleFeedServiceMock, $this->configFactoryMock);
 
     $matchedList = $this->executeMethod($controller, 'getMatchList', array(

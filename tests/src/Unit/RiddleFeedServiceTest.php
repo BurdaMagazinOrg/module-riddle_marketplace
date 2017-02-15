@@ -124,7 +124,7 @@ class RiddleFeedServiceTest extends UnitTestCase {
    *
    * @dataProvider processRiddleResponseDataProvider
    */
-  public function testProcessRiddleResponse($riddleResponse, $expected) {
+  public function testProcessRiddleResponse(array $riddleResponse, array $expected) {
     $feedService = new RiddleFeedService($this->cacheServiceMock, $this->configFactoryMock);
 
     $feed = $this->executeMethod(
