@@ -80,17 +80,16 @@ class RiddleUrlAutocompleteController extends ControllerBase {
    *
    * @param string $typedRiddleTitle
    *   Search text to match Riddle Title.
-   * @param array|null $riddleFeed
+   * @param array $riddleFeed
    *   Feed provided by Riddle Feed Service.
    *
    * @return array
    *   List of matched Riddle Titles.
    */
-  private function getMatchList($typedRiddleTitle, $riddleFeed) {
+  private function getMatchList($typedRiddleTitle, array $riddleFeed) {
     $matches = array();
 
-    // Cast to array, in case feed is NULL.
-    foreach ((array) $riddleFeed as $feedEntry) {
+    foreach ($riddleFeed as $feedEntry) {
       if (stripos($feedEntry['title'], $typedRiddleTitle) !== FALSE) {
         $riddleUrl = str_replace(
           array('%%RIDDLE_UID%%'),

@@ -110,14 +110,14 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
    *
    * @param string $query
    *   Query parameter, retrived from GET param 'q'.
-   * @param array|null $feed
+   * @param array $feed
    *   Feed provided by Riddle Service.
    * @param array $expected
    *   Expected result of search.
    *
    * @dataProvider getMatchListDataProvider
    */
-  public function testGetMatchList($query, $feed, array $expected) {
+  public function testGetMatchList($query, array $feed, array $expected) {
     $controller = new RiddleUrlAutocompleteController($this->riddleFeedServiceMock, $this->configFactoryMock);
 
     $matchedList = $this->executeMethod($controller, 'getMatchList', array(
@@ -193,7 +193,6 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
     );
 
     return array(
-      array('', NULL, array()),
       array('', array(), array()),
       array('not_found', $feed, array()),
       array('title', $feed, $matchResult),

@@ -75,8 +75,6 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
    * {@inheritdoc}
    */
   public function getFeed() {
-    $feed = NULL;
-
     $token = $this->getToken();
     $cacheId = 'riddle_marketplace.feed:' . $token;
 
