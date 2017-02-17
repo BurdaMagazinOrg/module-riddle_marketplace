@@ -157,9 +157,24 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
           continue;
         }
 
+        $image = NULL;
+        if ($riddleEntry['data']['image']['standard']) {
+          $urlParts = parse_url($riddleEntry['data']['image']['standard']);
+          if (!isset($urlParts['host'])) {
+            $image = 'https://www.riddle.com' . $riddleEntry['data']['image']['standard'] . '.' . $riddleEntry['data']['image']['format'];
+          }
+          else {
+            $image = $riddleEntry['data']['image']['standard'];
+          }
+        }
+
         $feed[] = [
           'title' => $this->getRiddleTitle($riddleEntry),
           'uid' => $riddleEntry['uid'],
+          'status' => ($riddleEntry['status'] == 'published') ? TRUE : FALSE,
+          'created' => $riddleEntry['created'],
+          'modified' => $riddleEntry['modified'],
+          'image' => $image,
         ];
       }
     }

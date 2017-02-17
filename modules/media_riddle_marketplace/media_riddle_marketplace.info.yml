@@ -1,0 +1,9 @@
+name: Media Riddle Marketplace Module
+description: Integrates riddle module with media_entity
+package: Riddle
+type: module
+version: 1.1
+core: 8.x
+
+dependencies:
+  - media_entity
