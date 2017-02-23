@@ -142,6 +142,12 @@ class Riddle extends MediaTypeBase {
     // If we have auth settings return the other fields.
     if ($riddle) {
       switch ($name) {
+        case 'title':
+          if (isset($riddle['title'])) {
+            return $riddle['title'];
+          }
+          return FALSE;
+
         case 'thumbnail':
           if (isset($riddle['image'])) {
             return $riddle['image'];
@@ -194,6 +200,18 @@ class Riddle extends MediaTypeBase {
     }
 
     return $this->getDefaultThumbnail();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefaultName(MediaInterface $media) {
+
+    if ($title = $this->getField($media, 'title')) {
+      return $title;
+    }
+
+    return parent::getDefaultName($media);
   }
 
 }

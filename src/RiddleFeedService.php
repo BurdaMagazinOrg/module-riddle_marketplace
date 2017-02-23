@@ -158,9 +158,9 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
         }
 
         $image = NULL;
-        if ($riddleEntry['data']['image']['standard']) {
+        if (!empty($riddleEntry['data']['image']['standard'])) {
           $urlParts = parse_url($riddleEntry['data']['image']['standard']);
-          if (!isset($urlParts['host'])) {
+          if (!isset($urlParts['host']) && !empty($riddleEntry['data']['image']['format'])) {
             $image = 'https://www.riddle.com' . $riddleEntry['data']['image']['standard'] . '.' . $riddleEntry['data']['image']['format'];
           }
           else {
