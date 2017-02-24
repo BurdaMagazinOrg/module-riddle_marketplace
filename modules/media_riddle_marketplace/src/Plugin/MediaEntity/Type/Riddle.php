@@ -12,7 +12,7 @@ use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides media type plugin for Instagram.
+ * Provides media type plugin for Riddle.
  *
  * @MediaType(
  *   id = "riddle_marketplace",
@@ -195,7 +195,7 @@ class Riddle extends MediaTypeBase {
    * {@inheritdoc}
    */
   public function getDefaultThumbnail() {
-    return $this->config->get('icon_base') . '/instagram.png';
+    return $this->config->get('icon_base') . '/riddle.jpg';
   }
 
   /**

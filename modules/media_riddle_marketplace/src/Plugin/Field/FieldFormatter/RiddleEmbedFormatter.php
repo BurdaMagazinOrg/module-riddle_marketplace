@@ -7,7 +7,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 
 /**
- * Plugin implementation of the 'twitter_embed' formatter.
+ * Plugin implementation of the 'riddle_embed' formatter.
  *
  * @FieldFormatter(
  *   id = "riddle_embed",
