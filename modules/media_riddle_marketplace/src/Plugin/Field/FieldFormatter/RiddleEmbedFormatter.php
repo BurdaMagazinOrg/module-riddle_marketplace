@@ -5,7 +5,6 @@ namespace Drupal\media_riddle_marketplace\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
-use Drupal\media_entity_twitter\Plugin\MediaEntity\Type\Twitter;
 
 /**
  * Plugin implementation of the 'twitter_embed' formatter.
@@ -46,7 +45,7 @@ class RiddleEmbedFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $element = array();
+    $element = [];
     foreach ($items as $delta => $item) {
 
       if ($code = $this->getEmbedCode($item)) {
@@ -55,11 +54,11 @@ class RiddleEmbedFormatter extends FormatterBase {
         $element[$delta] = [
           '#type' => 'inline_template',
           '#template' => $markup,
-          '#attached' => array(
-            'library' => array(
+          '#attached' => [
+            'library' => [
               'riddle_marketplace/riddle.embed',
-            ),
-          ),
+            ],
+          ],
         ];
       }
 

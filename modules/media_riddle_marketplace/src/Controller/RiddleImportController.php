@@ -48,10 +48,10 @@ class RiddleImportController extends ControllerBase {
    */
   public function content() {
 
-    $batch = array(
+    $batch = [
       'title' => 'Exporting',
       'operations' => [],
-    );
+    ];
 
     $mediaService = \Drupal::service('media_riddle_marketplace');
 

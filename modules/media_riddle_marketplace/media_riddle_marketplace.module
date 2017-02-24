@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Contains module hooks.
+ */
+
+/**
+ * Implements hook_cron().
+ *
+ * @see hook_cron()
+ */
+function riddle_marketplace_cron() {
+
+  \Drupal::service('media_riddle_marketplace')->createMediaEntities();
+}

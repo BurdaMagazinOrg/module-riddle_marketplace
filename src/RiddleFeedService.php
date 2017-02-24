@@ -159,19 +159,16 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
 
         $image = NULL;
         if (!empty($riddleEntry['data']['image']['standard'])) {
-          $urlParts = parse_url($riddleEntry['data']['image']['standard']);
-          if (!isset($urlParts['host']) && !empty($riddleEntry['data']['image']['format'])) {
-            $image = 'https://www.riddle.com' . $riddleEntry['data']['image']['standard'] . '.' . $riddleEntry['data']['image']['format'];
-          }
-          else {
-            $image = $riddleEntry['data']['image']['standard'];
-          }
+          $image = $this->getImage($riddleEntry['data']);
+        }
+        elseif (!empty($riddleEntry['draftData']['image']['standard'])) {
+          $image = $this->getImage($riddleEntry['draftData']);
         }
 
-        $feed[] = [
+        $feed[$riddleEntry['uid']] = [
           'title' => $this->getRiddleTitle($riddleEntry),
           'uid' => $riddleEntry['uid'],
-          'status' => ($riddleEntry['status'] == 'published') ? TRUE : FALSE,
+          'status' => ($riddleEntry['status'] == 'published') ? 1 : 0,
           'created' => $riddleEntry['created'],
           'modified' => $riddleEntry['modified'],
           'image' => $image,
@@ -180,6 +177,26 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
     }
 
     return $feed;
+  }
+
+  /**
+   * Return an image url.
+   *
+   * @param array $data
+   *   Riddle data array.
+   *
+   * @return string
+   *   A full url.
+   */
+  private function getImage(array $data) {
+    $urlParts = parse_url($data['image']['standard']);
+    if (!isset($urlParts['host']) && !empty($data['image']['format'])) {
+      $image = 'https://www.riddle.com' . $data['image']['standard'] . '.' . $data['image']['format'];
+    }
+    else {
+      $image = $data['image']['standard'];
+    }
+    return $image;
   }
 
   /**
@@ -220,6 +237,10 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
       return $riddleEntry['data']['title'];
     }
 
+    if (!empty($riddleEntry['draftData']['title'])) {
+      return $riddleEntry['draftData']['title'];
+    }
+
     return $this->emptyTitlePrefix . $riddleEntry['uid'];
   }
 
@@ -238,3 +259,4 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   }
 
 }
+]

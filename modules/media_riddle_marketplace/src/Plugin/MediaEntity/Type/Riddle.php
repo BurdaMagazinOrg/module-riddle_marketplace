@@ -79,6 +79,7 @@ class Riddle extends MediaTypeBase {
   public function providedFields() {
     return [
       'id' => $this->t('Riddle id'),
+      'status' => $this->t('Publishing status'),
       'thumbnail' => $this->t('Link to the thumbnail'),
       'thumbnail_local' => $this->t("Copies thumbnail locally and return it's URI"),
       'thumbnail_local_uri' => $this->t('Returns local URI of the thumbnail'),
@@ -145,6 +146,12 @@ class Riddle extends MediaTypeBase {
         case 'title':
           if (isset($riddle['title'])) {
             return $riddle['title'];
+          }
+          return FALSE;
+
+        case 'status':
+          if (isset($riddle['status'])) {
+            return $riddle['status'];
           }
           return FALSE;
 
