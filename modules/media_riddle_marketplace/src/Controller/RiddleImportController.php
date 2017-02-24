@@ -53,9 +53,7 @@ class RiddleImportController extends ControllerBase {
       'operations' => [],
     ];
 
-    $mediaService = \Drupal::service('media_riddle_marketplace');
-
-    foreach ($mediaService->getNewRiddles() as $bundle => $riddles) {
+    foreach ($this->riddleMediaService->getNewRiddles() as $bundle => $riddles) {
       /** @var \Drupal\media_entity\Entity\MediaBundle $bundle */
       $bundle = $this->entityTypeManager()->getStorage('media_bundle')
         ->load($bundle);
@@ -69,7 +67,7 @@ class RiddleImportController extends ControllerBase {
             [
               'bundle' => $bundle->id(),
               'source_field' => $sourceField,
-              'riddleId' => $riddle,
+              'riddle_id' => $riddle,
             ],
           ],
         ];
@@ -89,7 +87,7 @@ class RiddleImportController extends ControllerBase {
   public static function import(array $data) {
     Media::create([
       'bundle' => $data['bundle'],
-      $data['source_field'] => $data['riddleId'],
+      $data['source_field'] => $data['riddle_id'],
     ])->save();
   }
 
