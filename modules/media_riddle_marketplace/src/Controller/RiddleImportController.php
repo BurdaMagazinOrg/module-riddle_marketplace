@@ -6,6 +6,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\media_entity\Entity\Media;
 use Drupal\media_riddle_marketplace\RiddleMediaServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class RiddleImportController.
@@ -22,13 +23,23 @@ class RiddleImportController extends ControllerBase {
   protected $riddleMediaService;
 
   /**
+   * The current request.
+   *
+   * @var null|\Symfony\Component\HttpFoundation\Request
+   */
+  protected $request;
+
+  /**
    * RiddleImportController constructor.
    *
    * @param \Drupal\media_riddle_marketplace\RiddleMediaServiceInterface $riddleMediaService
    *   The riddle media service.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+   *   The request stack.
    */
-  public function __construct(RiddleMediaServiceInterface $riddleMediaService) {
+  public function __construct(RiddleMediaServiceInterface $riddleMediaService, RequestStack $requestStack) {
     $this->riddleMediaService = $riddleMediaService;
+    $this->request = $requestStack->getCurrentRequest();
   }
 
   /**
@@ -36,7 +47,8 @@ class RiddleImportController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('media_riddle_marketplace')
+      $container->get('media_riddle_marketplace'),
+      $container->get('request_stack')
     );
   }
 
@@ -75,7 +87,7 @@ class RiddleImportController extends ControllerBase {
     }
 
     batch_set($batch);
-    return batch_process('admin/content/media');
+    return batch_process($this->request->server->get('HTTP_REFERER'));
   }
 
   /**
