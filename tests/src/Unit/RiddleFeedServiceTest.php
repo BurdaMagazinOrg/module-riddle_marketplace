@@ -69,6 +69,7 @@ class RiddleFeedServiceTest extends UnitTestCase {
     $typed_config = $this->getMock('Drupal\Core\Config\TypedConfigManagerInterface');
     $config = new Config('riddle_marketplace', $storage, $event_dispatcher, $typed_config);
     $config->set('riddle_marketplace.empty_title_prefix', 'Riddle ');
+    $config->set('riddle_marketplace.fetch_unpublished', 1);
 
     $this->configFactoryMock->expects($this->once())
       ->method('get')
@@ -148,30 +149,52 @@ class RiddleFeedServiceTest extends UnitTestCase {
         'data' => [
           'title' => '',
         ],
+        'status' => 'published',
         'uid' => '1',
       ],
       [
         'data' => [
           'title' => 'Defined Title',
         ],
+        'status' => 'published',
         'uid' => '2',
+      ],
+      [
+        'data' => [],
+        'draftData' => [
+          'title' => 'Draft title',
+        ],
+        'status' => 'unpublished',
+        'uid' => '3',
       ],
       [
         'data' => [
           'title' => 'No UID Title',
         ],
+        'status' => 'published',
         'uid' => '',
       ],
     ];
 
     $expectedResult = [
-      [
+      1 => [
         'title' => 'Riddle 1',
+        'status' => TRUE,
         'uid' => '1',
+        'image' => NULL,
+
       ],
-      [
+      2 => [
         'title' => 'Defined Title',
+        'status' => TRUE,
         'uid' => '2',
+        'image' => NULL,
+      ],
+      3 => [
+        'title' => 'Draft title',
+        'status' => FALSE,
+        'uid' => '3',
+        'image' => NULL,
       ],
     ];
 

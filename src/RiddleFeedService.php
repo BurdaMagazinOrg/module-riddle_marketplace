@@ -169,8 +169,6 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
           'title' => $this->getRiddleTitle($riddleEntry),
           'uid' => $riddleEntry['uid'],
           'status' => ($riddleEntry['status'] == 'published') ? 1 : 0,
-          'created' => $riddleEntry['created'],
-          'modified' => $riddleEntry['modified'],
           'image' => $image,
         ];
       }
@@ -211,7 +209,7 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   private function isValidRiddleFeedEntry($riddleEntry) {
     if (
       empty($riddleEntry) || !is_array($riddleEntry)
-      || empty($riddleEntry['data']) || !is_array($riddleEntry['data'])
+      || ((empty($riddleEntry['data']) || !is_array($riddleEntry['data'])) && (empty($riddleEntry['draftData']) || !is_array($riddleEntry['draftData'])))
       || empty($riddleEntry['uid'])
     ) {
       return FALSE;
