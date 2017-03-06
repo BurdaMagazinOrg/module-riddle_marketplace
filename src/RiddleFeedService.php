@@ -188,12 +188,21 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
    */
   private function getImage(array $data) {
     $urlParts = parse_url($data['image']['standard']);
-    if (!isset($urlParts['host']) && !empty($data['image']['format'])) {
-      $image = 'https://www.riddle.com' . $data['image']['standard'] . '.' . $data['image']['format'];
+    $image = $urlParts['path'];
+
+    $pathinfo = pathinfo($urlParts['path']);
+
+    if (empty($urlParts['host'])) {
+      $image = 'https://www.riddle.com' . $image;
     }
     else {
-      $image = $data['image']['standard'];
+      $image = $urlParts['scheme'] . '://' . $urlParts['host'] . $image;
     }
+
+    if (!empty($data['image']['format']) && empty($pathinfo['extension'])) {
+      $image = $image . '.' . $data['image']['format'];
+    }
+
     return $image;
   }
 

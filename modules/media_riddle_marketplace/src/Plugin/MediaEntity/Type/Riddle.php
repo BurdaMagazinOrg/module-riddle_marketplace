@@ -8,7 +8,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media_entity\MediaInterface;
 use Drupal\media_entity\MediaTypeBase;
-use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -30,13 +29,6 @@ class Riddle extends MediaTypeBase {
   protected $configFactory;
 
   /**
-   * Guzzle client.
-   *
-   * @var \GuzzleHttp\Client
-   */
-  protected $httpClient;
-
-  /**
    * Constructs a new class instance.
    *
    * @param array $configuration
@@ -52,10 +44,9 @@ class Riddle extends MediaTypeBase {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   Config factory service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, Client $httpClient) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $config_factory->get('media_entity.settings'));
     $this->configFactory = $config_factory;
-    $this->httpClient = $httpClient;
   }
 
   /**
@@ -68,8 +59,7 @@ class Riddle extends MediaTypeBase {
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('entity_field.manager'),
-      $container->get('config.factory'),
-      $container->get('http_client')
+      $container->get('config.factory')
     );
   }
 
@@ -195,7 +185,7 @@ class Riddle extends MediaTypeBase {
    * {@inheritdoc}
    */
   public function getDefaultThumbnail() {
-    return $this->config->get('icon_base') . '/riddle.jpg';
+    return $this->config->get('icon_base') . '/riddle.png';
   }
 
   /**

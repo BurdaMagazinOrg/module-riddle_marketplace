@@ -61,7 +61,7 @@ class RiddleImportController extends ControllerBase {
   public function content() {
 
     $batch = [
-      'title' => 'Exporting',
+      'title' => 'Import riddles',
       'operations' => [],
     ];
 
