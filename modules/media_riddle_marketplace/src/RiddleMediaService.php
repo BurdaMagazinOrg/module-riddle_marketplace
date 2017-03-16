@@ -68,7 +68,7 @@ class RiddleMediaService implements RiddleMediaServiceInterface {
 
     $feed = $this->feedService->getFeed();
 
-    $riddleIds = array_column($feed, 'uid');
+    $riddle_feed_ids = array_column($feed, 'uid');
 
     /** @var \Drupal\media_entity\MediaBundleInterface[] $riddleBundles */
     $riddleBundles = $this->entityTypeManager->getStorage('media_bundle')
@@ -81,23 +81,13 @@ class RiddleMediaService implements RiddleMediaServiceInterface {
 
       $sourceField = $riddleBundle->getTypeConfiguration()['source_field'];
 
-      $riddles = $this->entityTypeManager->getStorage('media')
-        ->loadByProperties([
-          'bundle' => $riddleBundle->id(),
-          $sourceField => $riddleIds,
-        ]);
+      $existing_riddle_id = \Drupal::database()->select("media__$sourceField", 'n')
+        ->condition("n.${sourceField}_value", $riddle_feed_ids, 'IN')
+        ->fields('n', array("${sourceField}_value"))
+        ->execute()
+        ->fetchCol();
 
-      if (count($riddles) == count($riddleIds)) {
-        continue;
-      }
-
-      $existingRiddles = [];
-      foreach ($riddles as $riddle) {
-        $property_name = $riddle->{$sourceField}->first()->mainPropertyName();
-        $existingRiddles[] = $riddle->{$sourceField}->{$property_name};
-      }
-
-      $newRiddles[$riddleBundle->id()] = array_diff($riddleIds, $existingRiddles);
+      $newRiddles[$riddleBundle->id()] = array_diff($riddle_feed_ids, $existing_riddle_id);
     }
 
     return $newRiddles;
