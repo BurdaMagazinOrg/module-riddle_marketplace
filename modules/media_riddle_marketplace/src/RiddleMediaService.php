@@ -2,6 +2,7 @@
 
 namespace Drupal\media_riddle_marketplace;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\riddle_marketplace\RiddleFeedServiceInterface;
 
@@ -27,6 +28,13 @@ class RiddleMediaService implements RiddleMediaServiceInterface {
   protected $entityTypeManager;
 
   /**
+   * The database service.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
    * Riddle Media Service.
    *
    * Constructor.
@@ -35,10 +43,13 @@ class RiddleMediaService implements RiddleMediaServiceInterface {
    *   Riddle Feed service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The database service.
    */
-  public function __construct(RiddleFeedServiceInterface $feedService, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(RiddleFeedServiceInterface $feedService, EntityTypeManagerInterface $entityTypeManager, Connection $database) {
     $this->feedService = $feedService;
     $this->entityTypeManager = $entityTypeManager;
+    $this->database = $database;
   }
 
   /**
@@ -81,9 +92,9 @@ class RiddleMediaService implements RiddleMediaServiceInterface {
 
       $sourceField = $riddleBundle->getTypeConfiguration()['source_field'];
 
-      $existing_riddle_id = \Drupal::database()->select("media__$sourceField", 'n')
+      $existing_riddle_id = $this->database->select("media__$sourceField", 'n')
         ->condition("n.${sourceField}_value", $riddle_feed_ids, 'IN')
-        ->fields('n', array("${sourceField}_value"))
+        ->fields('n', ["${sourceField}_value"])
         ->execute()
         ->fetchCol();
 

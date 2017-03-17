@@ -52,6 +52,13 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   private $emptyTitlePrefix;
 
   /**
+   * Should unpublished riddles also fetched from api.
+   *
+   * @var int
+   */
+  private $fetchUnpublished;
+
+  /**
    * Riddle Feed Service.
    *
    * Constructor.
@@ -69,6 +76,7 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
 
     // Set Empty Title Prefix.
     $this->emptyTitlePrefix = $this->moduleSettings->get('riddle_marketplace.empty_title_prefix');
+    $this->fetchUnpublished = $this->moduleSettings->get('riddle_marketplace.fetch_unpublished');
   }
 
   /**
@@ -165,12 +173,14 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
           $image = $this->getImage($riddleEntry['draftData']);
         }
 
-        $feed[$riddleEntry['uid']] = [
-          'title' => $this->getRiddleTitle($riddleEntry),
-          'uid' => $riddleEntry['uid'],
-          'status' => ($riddleEntry['status'] == 'published') ? 1 : 0,
-          'image' => $image,
-        ];
+        if ($this->fetchUnpublished || $riddleEntry['status'] == 'published') {
+          $feed[$riddleEntry['uid']] = [
+            'title' => $this->getRiddleTitle($riddleEntry),
+            'uid' => $riddleEntry['uid'],
+            'status' => ($riddleEntry['status'] == 'published') ? 1 : 0,
+            'image' => $image,
+          ];
+        }
       }
     }
 
