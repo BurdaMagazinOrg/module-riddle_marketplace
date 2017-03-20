@@ -16,17 +16,17 @@ function paragraphs_riddle_marketplace_preprocess_paragraph(&$variables) {
     $field_data = $paragraph->field_link->getValue();
     $riddle_url = $field_data[0]['uri'];
     $markup = '<div class="riddle_target" data-url="' . $riddle_url . '" style="max-width:640px;margin:0 auto"></div>';
-    $response = array(
+    $response = [
       '#type' => 'markup',
       '#markup' => render($markup),
       "#style_name" => 'riddle_iframe',
-      '#allowed_tags' => array('class', 'div'),
-      '#attached' => array(
-        'library' => array(
+      '#allowed_tags' => ['class', 'div'],
+      '#attached' => [
+        'library' => [
           'paragraphs_riddle_marketplace/riddle.embed',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
     $variables['content'] = $response;
   }
 }

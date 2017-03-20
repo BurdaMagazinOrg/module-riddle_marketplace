@@ -31,7 +31,7 @@ function riddle_marketplace_update_8001() {
   }
 
   // Check defined configuration keys from settings file.
-  $version8001Keys = array('api_url', 'url', 'empty_title_prefix');
+  $version8001Keys = ['api_url', 'url', 'empty_title_prefix'];
   foreach ($sourceConfig as $sourceKey => $sourceValue) {
     if (in_array($sourceKey, $version8001Keys)) {
       $storedKey = $moduleName . '.' . $sourceKey;

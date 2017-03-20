@@ -34,10 +34,10 @@ class RiddleFeedServiceTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => "RiddleFeedService's controller functionality",
       'description' => 'Test Unit for module riddle_marketplace and service RiddleFeedService.',
-    );
+    ];
   }
 
   /**
@@ -88,7 +88,7 @@ class RiddleFeedServiceTest extends UnitTestCase {
    * @return mixed
    *   Return result of method execution.
    */
-  public function executeMethod(&$object, $methodName, array $parameters = array()) {
+  public function executeMethod(&$object, $methodName, array $parameters = []) {
     $reflection = new \ReflectionClass(get_class($object));
     $method = $reflection->getMethod($methodName);
     $method->setAccessible(TRUE);
@@ -130,7 +130,7 @@ class RiddleFeedServiceTest extends UnitTestCase {
     $feed = $this->executeMethod(
       $feedService,
       'processRiddleResponse',
-      array($riddleResponse)
+      [$riddleResponse]
     );
 
     $this->assertEquals($expected, $feed);
@@ -143,42 +143,42 @@ class RiddleFeedServiceTest extends UnitTestCase {
    *   Return test cases for testProcessRiddleResponse.
    */
   public function processRiddleResponseDataProvider() {
-    $riddleFeed = array(
-      array(
-        'data' => array(
+    $riddleFeed = [
+      [
+        'data' => [
           'title' => '',
-        ),
+        ],
         'uid' => '1',
-      ),
-      array(
-        'data' => array(
+      ],
+      [
+        'data' => [
           'title' => 'Defined Title',
-        ),
+        ],
         'uid' => '2',
-      ),
-      array(
-        'data' => array(
+      ],
+      [
+        'data' => [
           'title' => 'No UID Title',
-        ),
+        ],
         'uid' => '',
-      ),
-    );
+      ],
+    ];
 
-    $expectedResult = array(
-      array(
+    $expectedResult = [
+      [
         'title' => 'Riddle 1',
         'uid' => '1',
-      ),
-      array(
+      ],
+      [
         'title' => 'Defined Title',
         'uid' => '2',
-      ),
-    );
+      ],
+    ];
 
-    return array(
-      array(array(), array()),
-      array($riddleFeed, $expectedResult),
-    );
+    return [
+      [[], []],
+      [$riddleFeed, $expectedResult],
+    ];
   }
 
 }

@@ -112,8 +112,8 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
    */
   private function getApiUrl() {
     return str_replace(
-      array("%%TOKEN%%"),
-      array($this->getToken()),
+      ["%%TOKEN%%"],
+      [$this->getToken()],
       $this->moduleSettings->get('riddle_marketplace.api_url')
     );
   }
@@ -148,7 +148,7 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
    *   Filtered Riddle Feed with params relevant for Module.
    */
   private function processRiddleResponse($riddleResponse) {
-    $feed = array();
+    $feed = [];
 
     if (!empty($riddleResponse) && is_array($riddleResponse)) {
       foreach ($riddleResponse as $riddleEntry) {
@@ -157,10 +157,10 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
           continue;
         }
 
-        $feed[] = array(
+        $feed[] = [
           'title' => $this->getRiddleTitle($riddleEntry),
           'uid' => $riddleEntry['uid'],
-        );
+        ];
       }
     }
 

@@ -23,10 +23,10 @@ class RiddleUrlFieldWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
+    return [
       'size' => 60,
       'placeholder' => '',
-    ) + parent::defaultSettings();
+    ] + parent::defaultSettings();
   }
 
   /**
@@ -35,9 +35,9 @@ class RiddleUrlFieldWidget extends WidgetBase {
   public function settingsSummary() {
     $summary = [];
 
-    $summary[] = $this->t('Textfield size: @size', array('@size' => $this->getSetting('size')));
+    $summary[] = $this->t('Textfield size: @size', ['@size' => $this->getSetting('size')]);
     if (!empty($this->getSetting('placeholder'))) {
-      $summary[] = $this->t('Placeholder: @placeholder', array('@placeholder' => $this->getSetting('placeholder')));
+      $summary[] = $this->t('Placeholder: @placeholder', ['@placeholder' => $this->getSetting('placeholder')]);
     }
 
     return $summary;
@@ -47,14 +47,14 @@ class RiddleUrlFieldWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $element['uri'] = $element + array(
+    $element['uri'] = $element + [
       '#type' => 'textfield',
       '#default_value' => isset($items[$delta]->uri) ? $items[$delta]->uri : NULL,
       '#size' => $this->getSetting('size'),
       '#placeholder' => $this->getSetting('placeholder'),
       '#maxlength' => $this->getFieldSetting('max_length'),
       '#autocomplete_route_name' => 'paragraphs_riddle_marketplace.riddle_url_autocomplete_controller_autocomplete',
-    );
+    ];
 
     return $element;
   }
