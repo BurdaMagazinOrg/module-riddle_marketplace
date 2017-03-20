@@ -276,4 +276,3 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   }
 
 }
-]
