@@ -165,22 +165,16 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
           continue;
         }
 
-        $image = NULL;
-        if (!empty($riddleEntry['data']['image']['standard'])) {
-          $image = $this->getImage($riddleEntry['data']);
-        }
-        elseif (!empty($riddleEntry['draftData']['image']['standard'])) {
-          $image = $this->getImage($riddleEntry['draftData']);
+        if (!$this->fetchUnpublished && $riddleEntry['status'] == 'draft') {
+          continue;
         }
 
-        if ($this->fetchUnpublished || $riddleEntry['status'] == 'published') {
-          $feed[$riddleEntry['uid']] = [
-            'title' => $this->getRiddleTitle($riddleEntry),
-            'uid' => $riddleEntry['uid'],
-            'status' => ($riddleEntry['status'] == 'published') ? 1 : 0,
-            'image' => $image,
-          ];
-        }
+        $feed[$riddleEntry['uid']] = [
+          'title' => $this->getRiddleTitle($riddleEntry),
+          'uid' => $riddleEntry['uid'],
+          'status' => ($riddleEntry['status'] == 'published') ? 1 : 0,
+          'image' => $this->getImage($riddleEntry),
+        ];
       }
     }
 
@@ -190,27 +184,38 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   /**
    * Return an image url.
    *
-   * @param array $data
-   *   Riddle data array.
+   * @param array|null $riddleEntry
+   *   Single Riddle Feed Entry.
    *
    * @return string
    *   A full url.
    */
-  private function getImage(array $data) {
-    $urlParts = parse_url($data['image']['standard']);
-    $image = $urlParts['path'];
+  private function getImage($riddleEntry) {
 
-    $pathinfo = pathinfo($urlParts['path']);
-
-    if (empty($urlParts['host'])) {
-      $image = 'https://www.riddle.com' . $image;
+    $image = $data = NULL;
+    if (!empty($riddleEntry['data']['image']['standard'])) {
+      $data = $riddleEntry['data'];
     }
-    else {
-      $image = $urlParts['scheme'] . '://' . $urlParts['host'] . $image;
+    elseif (!empty($riddleEntry['draftData']['image']['standard'])) {
+      $data = $riddleEntry['draftData'];
     }
 
-    if (!empty($data['image']['format']) && empty($pathinfo['extension'])) {
-      $image = $image . '.' . $data['image']['format'];
+    if ($data) {
+      $urlParts = parse_url($data['image']['standard']);
+      $image = $urlParts['path'];
+
+      $pathinfo = pathinfo($urlParts['path']);
+
+      if (empty($urlParts['host'])) {
+        $image = 'https://www.riddle.com' . $image;
+      }
+      else {
+        $image = $urlParts['scheme'] . '://' . $urlParts['host'] . $image;
+      }
+
+      if (!empty($data['image']['format']) && empty($pathinfo['extension'])) {
+        $image = $image . '.' . $data['image']['format'];
+      }
     }
 
     return $image;

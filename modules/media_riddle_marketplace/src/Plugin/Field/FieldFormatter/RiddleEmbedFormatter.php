@@ -49,11 +49,9 @@ class RiddleEmbedFormatter extends FormatterBase {
     foreach ($items as $delta => $item) {
 
       if ($code = $this->getEmbedCode($item)) {
-        $markup = '<div class="riddle_target" data-rid-id="' . $code . '" data-fg="#1486cd" data-bg="#FFFFFF" style="margin:0 auto;max-width:100%;width:640px;"><iframe style="width:100%;height:300px;border:1px solid #cfcfcf;" src="https://www.riddle.com/a/' . $code . '"></iframe></div>';
-
         $element[$delta] = [
-          '#type' => 'inline_template',
-          '#template' => $markup,
+          '#theme' => 'media_riddle_marketplace',
+          '#code' => $code,
           '#attached' => [
             'library' => [
               'riddle_marketplace/riddle.embed',

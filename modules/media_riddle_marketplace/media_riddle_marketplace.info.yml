@@ -1,5 +1,5 @@
-name: Media Riddle Marketplace Module
-description: Integrates riddle module with media_entity
+name: 'Media Riddle Marketplace'
+description: 'Integrates riddle module with media_entity'
 package: Riddle
 type: module
 core: 8.x

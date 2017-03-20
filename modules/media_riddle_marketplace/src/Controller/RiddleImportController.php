@@ -74,7 +74,7 @@ class RiddleImportController extends ControllerBase {
       foreach ($riddles as $riddle) {
 
         $batch['operations'][] = [
-          '\Drupal\media_riddle_marketplace\Controller\RiddleImportController::import',
+          get_class($this) . '::import',
           [
             [
               'bundle' => $bundle->id(),

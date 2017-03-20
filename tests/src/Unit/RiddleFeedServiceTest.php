@@ -69,7 +69,6 @@ class RiddleFeedServiceTest extends UnitTestCase {
     $typed_config = $this->getMock('Drupal\Core\Config\TypedConfigManagerInterface');
     $config = new Config('riddle_marketplace', $storage, $event_dispatcher, $typed_config);
     $config->set('riddle_marketplace.empty_title_prefix', 'Riddle ');
-    $config->set('riddle_marketplace.fetch_unpublished', 1);
 
     $this->configFactoryMock->expects($this->once())
       ->method('get')
@@ -122,11 +121,15 @@ class RiddleFeedServiceTest extends UnitTestCase {
    *   Test case of Riddle API response.
    * @param array $expected
    *   Expected result of processRiddleResponse execution.
+   * @param int $fetchUnpublished
+   *   Indicates if fetch unpublished or not.
    *
    * @dataProvider processRiddleResponseDataProvider
    */
-  public function testProcessRiddleResponse(array $riddleResponse, array $expected) {
+  public function testProcessRiddleResponse(array $riddleResponse, array $expected, $fetchUnpublished) {
+
     $feedService = new RiddleFeedService($this->cacheServiceMock, $this->configFactoryMock);
+    $this->setProperty($feedService, 'fetchUnpublished', $fetchUnpublished);
 
     $feed = $this->executeMethod(
       $feedService,
@@ -164,7 +167,7 @@ class RiddleFeedServiceTest extends UnitTestCase {
         'draftData' => [
           'title' => 'Draft title',
         ],
-        'status' => 'unpublished',
+        'status' => 'draft',
         'uid' => '3',
       ],
       [
@@ -176,7 +179,7 @@ class RiddleFeedServiceTest extends UnitTestCase {
       ],
     ];
 
-    $expectedResult = [
+    $firstExpectedResult = [
       1 => [
         'title' => 'Riddle 1',
         'status' => TRUE,
@@ -198,9 +201,26 @@ class RiddleFeedServiceTest extends UnitTestCase {
       ],
     ];
 
+    $secondExpectedResult = [
+      1 => [
+        'title' => 'Riddle 1',
+        'status' => TRUE,
+        'uid' => '1',
+        'image' => NULL,
+
+      ],
+      2 => [
+        'title' => 'Defined Title',
+        'status' => TRUE,
+        'uid' => '2',
+        'image' => NULL,
+      ],
+    ];
+
     return [
-      [[], []],
-      [$riddleFeed, $expectedResult],
+      [[], [], 1],
+      [$riddleFeed, $firstExpectedResult, 1],
+      [$riddleFeed, $secondExpectedResult, 0],
     ];
   }
 

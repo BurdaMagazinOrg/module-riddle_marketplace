@@ -10,7 +10,18 @@
  *
  * @see hook_cron()
  */
-function riddle_marketplace_cron() {
+function media_riddle_marketplace_cron() {
 
   \Drupal::service('media_riddle_marketplace')->createMediaEntities();
+}
+
+/**
+ * Implements hook_theme().
+ */
+function media_riddle_marketplace_theme() {
+  return [
+    'media_riddle_marketplace' => [
+      'variables' => ['code' => NULL],
+    ],
+  ];
 }

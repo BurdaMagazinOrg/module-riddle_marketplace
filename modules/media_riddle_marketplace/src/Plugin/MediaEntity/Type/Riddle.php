@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\media_entity\MediaInterface;
 use Drupal\media_entity\MediaTypeBase;
+use Drupal\riddle_marketplace\RiddleFeedServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -29,6 +30,13 @@ class Riddle extends MediaTypeBase {
   protected $configFactory;
 
   /**
+   * Riddle feed service.
+   *
+   * @var \Drupal\riddle_marketplace\RiddleFeedServiceInterface
+   */
+  protected $riddleFeed;
+
+  /**
    * Constructs a new class instance.
    *
    * @param array $configuration
@@ -43,10 +51,13 @@ class Riddle extends MediaTypeBase {
    *   Entity field manager service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   Config factory service.
+   * @param \Drupal\riddle_marketplace\RiddleFeedServiceInterface $riddleFeed
+   *   Riddle feed service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, RiddleFeedServiceInterface $riddleFeed) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $config_factory->get('media_entity.settings'));
     $this->configFactory = $config_factory;
+    $this->riddleFeed = $riddleFeed;
   }
 
   /**
@@ -59,7 +70,8 @@ class Riddle extends MediaTypeBase {
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('entity_field.manager'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('riddle_marketplace.feed')
     );
   }
 
@@ -106,7 +118,6 @@ class Riddle extends MediaTypeBase {
   public function getField(MediaInterface $media, $name) {
 
     $code = NULL;
-    $feed = \Drupal::service('riddle_marketplace.feed');
     if (isset($this->configuration['source_field'])) {
       $source_field = $this->configuration['source_field'];
       if ($media->hasField($source_field)) {
@@ -123,7 +134,7 @@ class Riddle extends MediaTypeBase {
       return $code;
     }
 
-    $riddleFeed = $feed->getFeed();
+    $riddleFeed = $this->riddleFeed->getFeed();
     $riddle = array_filter($riddleFeed, function ($entry) use ($code) {
       return $entry['uid'] == $code;
     });
