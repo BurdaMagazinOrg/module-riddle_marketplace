@@ -87,18 +87,18 @@ class RiddleUrlAutocompleteController extends ControllerBase {
    *   List of matched Riddle Titles.
    */
   private function getMatchList($typedRiddleTitle, array $riddleFeed) {
-    $matches = array();
+    $matches = [];
 
     foreach ($riddleFeed as $feedEntry) {
       if (stripos($feedEntry['title'], $typedRiddleTitle) !== FALSE) {
         $riddleUrl = str_replace(
-          array('%%RIDDLE_UID%%'),
-          array($feedEntry['uid']),
+          ['%%RIDDLE_UID%%'],
+          [$feedEntry['uid']],
           $this->riddleUrlTemplate
         );
         $riddleTitle = Html::escape($feedEntry['title']);
 
-        $matches[] = array('value' => $riddleUrl, 'label' => $riddleTitle);
+        $matches[] = ['value' => $riddleUrl, 'label' => $riddleTitle];
       }
     }
 

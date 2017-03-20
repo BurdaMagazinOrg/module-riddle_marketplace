@@ -48,14 +48,14 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
    * {@inheritdoc}
    */
   public function getDependencies(Editor $editor) {
-    return array();
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
   public  function getLibraries(Editor $editor) {
-    return array();
+    return [];
 
   }
 
@@ -78,14 +78,14 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
    */
   public function getButtons() {
 
-    return array(
-      'RiddleButton' => array(
+    return [
+      'RiddleButton' => [
         'label' => 'Riddles',
         'image' => drupal_get_path('module', 'riddle_marketplace') . '/images/riddle.jpg',
         'image_alternative' => 'Riddles',
-        'attributes' => array(),
-      ),
-    );
+        'attributes' => [],
+      ],
+    ];
   }
 
   /**
@@ -94,10 +94,10 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
    * {@inheritdoc}
    */
   public function getConfig(Editor $editor) {
-    return array(
+    return [
       'data' => json_encode($this->riddleFeedService->getFeed()),
       'riddle_url' => $this->moduleSettings->get('riddle_marketplace.url'),
-    );
+    ];
   }
 
   /**
@@ -118,7 +118,7 @@ class RiddleButton extends CKEditorPluginBase implements CKEditorPluginInterface
    *   plugin manager.
    */
   public function getPluginDefinition() {
-    return array();
+    return [];
   }
 
 }

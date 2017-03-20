@@ -33,10 +33,10 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => "RiddleUrlAutocompleteController's controller functionality",
       'description' => 'Test Unit for module paragraphs_riddle_marketplace and controller RiddleUrlAutocompleteController.',
-    );
+    ];
   }
 
   /**
@@ -79,7 +79,7 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
    * @return mixed
    *   Return result of method execution.
    */
-  public function executeMethod(&$object, $methodName, array $parameters = array()) {
+  public function executeMethod(&$object, $methodName, array $parameters = []) {
     $reflection = new \ReflectionClass(get_class($object));
     $method = $reflection->getMethod($methodName);
     $method->setAccessible(TRUE);
@@ -120,10 +120,10 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
   public function testGetMatchList($query, array $feed, array $expected) {
     $controller = new RiddleUrlAutocompleteController($this->riddleFeedServiceMock, $this->configFactoryMock);
 
-    $matchedList = $this->executeMethod($controller, 'getMatchList', array(
+    $matchedList = $this->executeMethod($controller, 'getMatchList', [
       $query,
       $feed,
-    ));
+    ]);
     $this->assertEquals($expected, $matchedList);
   }
 
@@ -134,23 +134,23 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
     $controller = new RiddleUrlAutocompleteController($this->riddleFeedServiceMock, $this->configFactoryMock);
 
     $this->setProperty($controller, 'riddleUrlTemplate', 'https://www.test.com/a/%%RIDDLE_UID%%');
-    $matchedList = $this->executeMethod($controller, 'getMatchList', array(
+    $matchedList = $this->executeMethod($controller, 'getMatchList', [
       'title',
-      array(
-        array(
+      [
+        [
           'title' => 'test title',
           'uid' => '1',
-        ),
-      ),
-    ));
+        ],
+      ],
+    ]);
 
     $this->assertEquals(
-      array(
-        array(
+      [
+        [
           'value' => 'https://www.test.com/a/1',
           'label' => 'test title',
-        ),
-      ),
+        ],
+      ],
       $matchedList
     );
   }
@@ -162,43 +162,43 @@ class RiddleUrlAutocompleteControllerTest extends UnitTestCase {
    *   Return test cases for testGetMatchList.
    */
   public function getMatchListDataProvider() {
-    $feed = array(
-      array(
+    $feed = [
+      [
         'title' => 'test title',
         'uid' => '1',
-      ),
-      array(
+      ],
+      [
         'title' => 'TEST TITLE',
         'uid' => '2',
-      ),
-      array(
+      ],
+      [
         'title' => 'TiTlE',
         'uid' => '3',
-      ),
-    );
+      ],
+    ];
 
-    $matchResult = array(
-      array(
+    $matchResult = [
+      [
         'value' => 'https://www.riddle.com/a/1',
         'label' => 'test title',
-      ),
-      array(
+      ],
+      [
         'value' => 'https://www.riddle.com/a/2',
         'label' => 'TEST TITLE',
-      ),
-      array(
+      ],
+      [
         'value' => 'https://www.riddle.com/a/3',
         'label' => 'TiTlE',
-      ),
-    );
+      ],
+    ];
 
-    return array(
-      array('', array(), array()),
-      array('not_found', $feed, array()),
-      array('title', $feed, $matchResult),
-      array('test', $feed, array($matchResult[0], $matchResult[1])),
-      array('test1', $feed, array()),
-    );
+    return [
+      ['', [], []],
+      ['not_found', $feed, []],
+      ['title', $feed, $matchResult],
+      ['test', $feed, [$matchResult[0], $matchResult[1]]],
+      ['test1', $feed, []],
+    ];
   }
 
 }

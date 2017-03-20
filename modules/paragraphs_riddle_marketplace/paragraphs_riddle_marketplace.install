@@ -72,17 +72,17 @@ function paragraphs_riddle_marketplace_update_8001() {
    */
   if ($storedFields = $entityManager
     ->getStorage('field_config')
-    ->loadByProperties(array('id' => $fieldConfigId))
+    ->loadByProperties(['id' => $fieldConfigId])
   ) {
     foreach ($storedFields as $storedField) {
       $storedField->set('label', $fieldConfigData['label'])
         ->save();
 
       // Properties used to find entity.
-      $searchProperties = array(
+      $searchProperties = [
         'targetEntityType' => $storedField->getTargetEntityTypeId(),
         'bundle' => $storedField->getTargetBundle(),
-      );
+      ];
 
       if ($formDisplays = $entityManager
         ->getStorage('entity_form_display')
@@ -111,7 +111,7 @@ function paragraphs_riddle_marketplace_update_8001() {
    */
   if ($paragraphRiddleTypes = $entityManager
     ->getStorage('paragraphs_type')
-    ->loadByProperties(array('id' => $paragraphTypeId))
+    ->loadByProperties(['id' => $paragraphTypeId])
   ) {
 
     // Update Paragraph Type Label.
