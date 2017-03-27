@@ -57,6 +57,8 @@ function riddle_marketplace_update_8200() {
     $display->setComponent('field_link', $component)->save();
   }
 
-  \Drupal::service('module_installer')->uninstall(['paragraphs_riddle_marketplace']);
-
+  \Drupal::database()->delete('key_value')
+    ->condition('collection', 'system.schema')
+    ->condition('name', 'paragraphs_riddle_marketplace')
+    ->execute();
 }
