@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Config\InstallStorage;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 
 /**
  * Set all required config objects.
@@ -41,4 +42,23 @@ function riddle_marketplace_update_8001() {
       }
     }
   }
+}
+
+/**
+ * Update to riddle 2.x.
+ */
+function riddle_marketplace_update_8200() {
+
+  $display = EntityFormDisplay::load('paragraph.paragraphs_riddle_marketplace.default');
+  $component = $display->getComponent('field_link');
+
+  if ($component['type'] == 'riddle_url_field_widget') {
+    $component['type'] = 'link_default';
+    $display->setComponent('field_link', $component)->save();
+  }
+
+  \Drupal::database()->delete('key_value')
+    ->condition('collection', 'system.schema')
+    ->condition('name', 'paragraphs_riddle_marketplace')
+    ->execute();
 }

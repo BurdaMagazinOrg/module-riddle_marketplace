@@ -52,6 +52,13 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   private $emptyTitlePrefix;
 
   /**
+   * Should unpublished riddles also fetched from api.
+   *
+   * @var int
+   */
+  private $fetchUnpublished;
+
+  /**
    * Riddle Feed Service.
    *
    * Constructor.
@@ -69,6 +76,7 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
 
     // Set Empty Title Prefix.
     $this->emptyTitlePrefix = $this->moduleSettings->get('riddle_marketplace.empty_title_prefix');
+    $this->fetchUnpublished = $this->moduleSettings->get('riddle_marketplace.fetch_unpublished');
   }
 
   /**
@@ -157,14 +165,60 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
           continue;
         }
 
-        $feed[] = [
+        if (!$this->fetchUnpublished && $riddleEntry['status'] == 'draft') {
+          continue;
+        }
+
+        $feed[$riddleEntry['uid']] = [
           'title' => $this->getRiddleTitle($riddleEntry),
           'uid' => $riddleEntry['uid'],
+          'status' => ($riddleEntry['status'] == 'published') ? 1 : 0,
+          'image' => $this->getImage($riddleEntry),
         ];
       }
     }
 
     return $feed;
+  }
+
+  /**
+   * Return an image url.
+   *
+   * @param array|null $riddleEntry
+   *   Single Riddle Feed Entry.
+   *
+   * @return string
+   *   A full url.
+   */
+  private function getImage($riddleEntry) {
+
+    $image = $data = NULL;
+    if (!empty($riddleEntry['data']['image']['standard'])) {
+      $data = $riddleEntry['data'];
+    }
+    elseif (!empty($riddleEntry['draftData']['image']['standard'])) {
+      $data = $riddleEntry['draftData'];
+    }
+
+    if ($data) {
+      $urlParts = parse_url($data['image']['standard']);
+      $image = $urlParts['path'];
+
+      $pathinfo = pathinfo($urlParts['path']);
+
+      if (empty($urlParts['host'])) {
+        $image = 'https://www.riddle.com' . $image;
+      }
+      else {
+        $image = $urlParts['scheme'] . '://' . $urlParts['host'] . $image;
+      }
+
+      if (!empty($data['image']['format']) && empty($pathinfo['extension'])) {
+        $image = $image . '.' . $data['image']['format'];
+      }
+    }
+
+    return $image;
   }
 
   /**
@@ -179,7 +233,7 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   private function isValidRiddleFeedEntry($riddleEntry) {
     if (
       empty($riddleEntry) || !is_array($riddleEntry)
-      || empty($riddleEntry['data']) || !is_array($riddleEntry['data'])
+      || ((empty($riddleEntry['data']) || !is_array($riddleEntry['data'])) && (empty($riddleEntry['draftData']) || !is_array($riddleEntry['draftData'])))
       || empty($riddleEntry['uid'])
     ) {
       return FALSE;
@@ -203,6 +257,10 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   private function getRiddleTitle(array $riddleEntry) {
     if (!empty($riddleEntry['data']['title'])) {
       return $riddleEntry['data']['title'];
+    }
+
+    if (!empty($riddleEntry['draftData']['title'])) {
+      return $riddleEntry['draftData']['title'];
     }
 
     return $this->emptyTitlePrefix . $riddleEntry['uid'];

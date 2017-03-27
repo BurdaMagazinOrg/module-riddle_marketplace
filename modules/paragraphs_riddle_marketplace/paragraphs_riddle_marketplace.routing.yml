@@ -1,8 +1,0 @@
-
-paragraphs_riddle_marketplace.riddle_url_autocomplete_controller_autocomplete:
-  path: '/paragraphs_riddle_marketplace/autocomplete'
-  defaults:
-    _controller: '\Drupal\paragraphs_riddle_marketplace\Controller\RiddleUrlAutocompleteController::autocomplete'
-    _title: 'autocomplete'
-  requirements:
-    _permission: 'administer nodes'
