@@ -5,6 +5,7 @@ namespace Drupal\riddle_marketplace;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\riddle_marketplace\Exception\NoApiKeyException;
 use GuzzleHttp\Client;
 
 /**
@@ -117,13 +118,19 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
    *
    * @return string
    *   Riddle API Url.
+   *
+   * @throws \Drupal\riddle_marketplace\Exception\NoApiKeyException
    */
   private function getApiUrl() {
-    return str_replace(
-      ["%%TOKEN%%"],
-      [$this->getToken()],
-      $this->moduleSettings->get('riddle_marketplace.api_url')
-    );
+
+    if ($token = $this->getToken()) {
+      return str_replace(
+        ["%%TOKEN%%"],
+        [$token],
+        $this->moduleSettings->get('riddle_marketplace.api_url')
+      );
+    }
+    throw new NoApiKeyException();
   }
 
   /**

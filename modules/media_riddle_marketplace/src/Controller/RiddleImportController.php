@@ -5,7 +5,9 @@ namespace Drupal\media_riddle_marketplace\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\media_entity\Entity\Media;
 use Drupal\media_riddle_marketplace\RiddleMediaServiceInterface;
+use Drupal\riddle_marketplace\Exception\NoApiKeyException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -65,25 +67,31 @@ class RiddleImportController extends ControllerBase {
       'operations' => [],
     ];
 
-    foreach ($this->riddleMediaService->getNewRiddles() as $bundle => $riddles) {
-      /** @var \Drupal\media_entity\Entity\MediaBundle $bundle */
-      $bundle = $this->entityTypeManager()->getStorage('media_bundle')
-        ->load($bundle);
-      $sourceField = $bundle->getTypeConfiguration()['source_field'];
+    try {
+      foreach ($this->riddleMediaService->getNewRiddles() as $bundle => $riddles) {
+        /** @var \Drupal\media_entity\Entity\MediaBundle $bundle */
+        $bundle = $this->entityTypeManager()->getStorage('media_bundle')
+          ->load($bundle);
+        $sourceField = $bundle->getTypeConfiguration()['source_field'];
 
-      foreach ($riddles as $riddle) {
+        foreach ($riddles as $riddle) {
 
-        $batch['operations'][] = [
-          get_class($this) . '::import',
-          [
+          $batch['operations'][] = [
+            get_class($this) . '::import',
             [
-              'bundle' => $bundle->id(),
-              'source_field' => $sourceField,
-              'riddle_id' => $riddle,
+              [
+                'bundle' => $bundle->id(),
+                'source_field' => $sourceField,
+                'riddle_id' => $riddle,
+              ],
             ],
-          ],
-        ];
+          ];
+        }
       }
+    }
+    catch (NoApiKeyException $exception) {
+      drupal_set_message($this->t('No API key provided. Please configure the riddle module.'), 'error');
+      return new RedirectResponse($this->request->server->get('HTTP_REFERER'));
     }
 
     batch_set($batch);
