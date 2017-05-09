@@ -124,11 +124,15 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   private function getApiUrl() {
 
     if ($token = $this->getToken()) {
-      return str_replace(
+      $url = str_replace(
         ["%%TOKEN%%"],
         [$token],
         $this->moduleSettings->get('riddle_marketplace.api_url')
       );
+      if (!$this->fetchUnpublished) {
+        $url .= '&status=published';
+      }
+      return $url;
     }
     throw new NoApiKeyException();
   }
@@ -169,10 +173,6 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
       foreach ($riddleResponse as $riddleEntry) {
         // Skip invalid riddle feed entries.
         if (!$this->isValidRiddleFeedEntry($riddleEntry)) {
-          continue;
-        }
-
-        if (!$this->fetchUnpublished && $riddleEntry['status'] == 'draft') {
           continue;
         }
 
