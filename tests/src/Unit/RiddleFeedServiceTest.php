@@ -121,15 +121,12 @@ class RiddleFeedServiceTest extends UnitTestCase {
    *   Test case of Riddle API response.
    * @param array $expected
    *   Expected result of processRiddleResponse execution.
-   * @param int $fetchUnpublished
-   *   Indicates if fetch unpublished or not.
    *
    * @dataProvider processRiddleResponseDataProvider
    */
-  public function testProcessRiddleResponse(array $riddleResponse, array $expected, $fetchUnpublished) {
+  public function testProcessRiddleResponse(array $riddleResponse, array $expected) {
 
     $feedService = new RiddleFeedService($this->cacheServiceMock, $this->configFactoryMock);
-    $this->setProperty($feedService, 'fetchUnpublished', $fetchUnpublished);
 
     $feed = $this->executeMethod(
       $feedService,
@@ -201,26 +198,9 @@ class RiddleFeedServiceTest extends UnitTestCase {
       ],
     ];
 
-    $secondExpectedResult = [
-      1 => [
-        'title' => 'Riddle 1',
-        'status' => TRUE,
-        'uid' => '1',
-        'image' => NULL,
-
-      ],
-      2 => [
-        'title' => 'Defined Title',
-        'status' => TRUE,
-        'uid' => '2',
-        'image' => NULL,
-      ],
-    ];
-
     return [
       [[], [], 1],
-      [$riddleFeed, $firstExpectedResult, 1],
-      [$riddleFeed, $secondExpectedResult, 0],
+      [$riddleFeed, $firstExpectedResult],
     ];
   }
 
