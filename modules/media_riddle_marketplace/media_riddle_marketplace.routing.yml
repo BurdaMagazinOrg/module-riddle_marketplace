@@ -4,4 +4,4 @@ riddle_marketplace.import:
     _controller: '\Drupal\media_riddle_marketplace\Controller\RiddleImportController::content'
     _title: 'Import my riddles'
   requirements:
-    _permission: 'administer content'
+    _permission: 'create media'
