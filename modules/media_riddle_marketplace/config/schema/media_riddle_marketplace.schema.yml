@@ -6,10 +6,6 @@ media_riddle_marketplace.settings:
       type: string
       label: 'Base folder for thumbnails'
 
-media_entity.bundle.type.riddle_marketplace:
-  type: mapping
+media.source.riddle_marketplace:
   label: 'Riddle type configuration'
-  mapping:
-    source_field:
-      type: string
-      label: 'Field with riddle shortcode'
+  type: media.source.field_aware

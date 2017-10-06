@@ -3,7 +3,7 @@
 namespace Drupal\media_riddle_marketplace\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\media_entity\Entity\Media;
+use Drupal\media\Entity\Media;
 use Drupal\media_riddle_marketplace\RiddleMediaServiceInterface;
 use Drupal\riddle_marketplace\Exception\NoApiKeyException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -68,11 +68,11 @@ class RiddleImportController extends ControllerBase {
     ];
 
     try {
-      foreach ($this->riddleMediaService->getNewRiddles() as $bundle => $riddles) {
-        /** @var \Drupal\media_entity\Entity\MediaBundle $bundle */
-        $bundle = $this->entityTypeManager()->getStorage('media_bundle')
-          ->load($bundle);
-        $sourceField = $bundle->getTypeConfiguration()['source_field'];
+      foreach ($this->riddleMediaService->getNewRiddles() as $type => $riddles) {
+        /** @var \Drupal\media\Entity\MediaType $type */
+        $type = $this->entityTypeManager()->getStorage('media_type')
+          ->load($type);
+        $sourceField = $type->get('source_configuration')['source_field'];
 
         foreach ($riddles as $riddle) {
 
@@ -80,7 +80,7 @@ class RiddleImportController extends ControllerBase {
             get_class($this) . '::import',
             [
               [
-                'bundle' => $bundle->id(),
+                'type' => $type->id(),
                 'source_field' => $sourceField,
                 'riddle_id' => $riddle,
               ],
@@ -106,7 +106,7 @@ class RiddleImportController extends ControllerBase {
    */
   public static function import(array $data) {
     Media::create([
-      'bundle' => $data['bundle'],
+      'bundle' => $data['type'],
       $data['source_field'] => $data['riddle_id'],
     ])->save();
   }

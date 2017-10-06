@@ -1,26 +1,28 @@
 <?php
 
-namespace Drupal\media_riddle_marketplace\Plugin\MediaEntity\Type;
+namespace Drupal\media_riddle_marketplace\Plugin\media\Source;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\media_entity\MediaInterface;
-use Drupal\media_entity\MediaTypeBase;
+use Drupal\Core\Field\FieldTypePluginManagerInterface;
+use Drupal\media\MediaSourceBase;
+use Drupal\media\MediaInterface;
 use Drupal\riddle_marketplace\RiddleFeedServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides media type plugin for Riddle.
  *
- * @MediaType(
+ * @MediaSource(
  *   id = "riddle_marketplace",
  *   label = @Translation("Riddle Marketplace"),
- *   description = @Translation("Provides business logic and metadata for riddle marketplace.")
+ *   description = @Translation("Provides business logic and metadata for riddle marketplace."),
+ *   allowed_field_types = {"string", "string_long"},
+ *   default_thumbnail_filename = "riddle.png"
  * )
  */
-class Riddle extends MediaTypeBase {
+class Riddle extends MediaSourceBase {
 
   /**
    * Config factory service.
@@ -49,14 +51,15 @@ class Riddle extends MediaTypeBase {
    *   Entity type manager service.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   Entity field manager service.
+   * @param \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager
+   *   The field type plugin manager service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   Config factory service.
+   *   The config factory service.
    * @param \Drupal\riddle_marketplace\RiddleFeedServiceInterface $riddleFeed
    *   Riddle feed service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, RiddleFeedServiceInterface $riddleFeed) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $config_factory->get('media_entity.settings'));
-    $this->configFactory = $config_factory;
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory, RiddleFeedServiceInterface $riddleFeed) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $field_type_manager, $config_factory);
     $this->riddleFeed = $riddleFeed;
   }
 
@@ -70,6 +73,7 @@ class Riddle extends MediaTypeBase {
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('entity_field.manager'),
+      $container->get('plugin.manager.field.field_type'),
       $container->get('config.factory'),
       $container->get('riddle_marketplace.feed')
     );
@@ -78,7 +82,7 @@ class Riddle extends MediaTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function providedFields() {
+  public function getMetadataAttributes() {
     return [
       'id' => $this->t('Riddle id'),
       'status' => $this->t('Publishing status'),
@@ -91,31 +95,7 @@ class Riddle extends MediaTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $options = [];
-    $bundle = $form_state->getFormObject()->getEntity();
-    $allowed_field_types = ['string', 'string_long'];
-    foreach ($this->entityFieldManager->getFieldDefinitions('media', $bundle->id()) as $field_name => $field) {
-      if (in_array($field->getType(), $allowed_field_types) && !$field->getFieldStorageDefinition()->isBaseField()) {
-        $options[$field_name] = $field->getLabel();
-      }
-    }
-
-    $form['source_field'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Field with source information'),
-      '#description' => $this->t('Field on media entity that stores riddle embed code. You can create a bundle without selecting a value for this dropdown initially. This dropdown can be populated after adding fields to the bundle.'),
-      '#default_value' => empty($this->configuration['source_field']) ? NULL : $this->configuration['source_field'],
-      '#options' => $options,
-    ];
-
-    return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getField(MediaInterface $media, $name) {
+  public function getMetadata(MediaInterface $media, $name) {
 
     $code = NULL;
     if (isset($this->configuration['source_field'])) {
@@ -145,25 +125,27 @@ class Riddle extends MediaTypeBase {
     if ($riddle) {
       switch ($name) {
         case 'title':
+        case 'default_name':
           if (isset($riddle['title'])) {
             return $riddle['title'];
           }
-          return FALSE;
+          return NULL;
 
         case 'status':
           if (isset($riddle['status'])) {
             return $riddle['status'];
           }
-          return FALSE;
+          return NULL;
 
         case 'thumbnail':
           if (isset($riddle['image'])) {
             return $riddle['image'];
           }
-          return FALSE;
+          return NULL;
 
         case 'thumbnail_local':
-          $local_uri = $this->getField($media, 'thumbnail_local_uri');
+        case 'thumbnail_uri':
+          $local_uri = $this->getMetadata($media, 'thumbnail_local_uri');
           if ($local_uri) {
             if (file_exists($local_uri)) {
               return $local_uri;
@@ -173,53 +155,26 @@ class Riddle extends MediaTypeBase {
               $directory = dirname($local_uri);
               file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
 
-              $image_url = $this->getField($media, 'thumbnail');
+              $image_url = $this->getMetadata($media, 'thumbnail');
 
               return file_unmanaged_save_data(file_get_contents($image_url), $local_uri, FILE_EXISTS_REPLACE);
             }
           }
-          return FALSE;
+          return NULL;
 
         case 'thumbnail_local_uri':
           if (isset($riddle['image'])) {
             return $this->configFactory->get('media_riddle_marketplace.settings')
               ->get('local_images') . '/' . $code . '.' . pathinfo(parse_url($riddle['image'], PHP_URL_PATH), PATHINFO_EXTENSION);
           }
-          return FALSE;
+          return parent::getMetadata($media, 'thumbnail_uri');
+
+        default:
+          return parent::getMetadata($media, $name);
       }
     }
 
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getDefaultThumbnail() {
-    return $this->config->get('icon_base') . '/riddle.png';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function thumbnail(MediaInterface $media) {
-    if ($local_image = $this->getField($media, 'thumbnail_local')) {
-      return $local_image;
-    }
-
-    return $this->getDefaultThumbnail();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getDefaultName(MediaInterface $media) {
-
-    if ($title = $this->getField($media, 'title')) {
-      return $title;
-    }
-
-    return parent::getDefaultName($media);
+    return NULL;
   }
 
 }

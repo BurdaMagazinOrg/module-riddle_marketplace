@@ -57,15 +57,15 @@ class RiddleMediaService implements RiddleMediaServiceInterface {
    */
   public function createMediaEntities() {
 
-    foreach ($this->getNewRiddles() as $bundle => $riddles) {
-      /** @var \Drupal\media_entity\MediaBundleInterface $bundle */
-      $bundle = $this->entityTypeManager->getStorage('media_bundle')
-        ->load($bundle);
-      $sourceField = $bundle->getTypeConfiguration()['source_field'];
+    foreach ($this->getNewRiddles() as $type => $riddles) {
+      /** @var \Drupal\media\MediaTypeInterface $type */
+      $type = $this->entityTypeManager->getStorage('media_type')
+        ->load($type);
+      $sourceField = $type->get('source_configuration')['source_field'];
 
       foreach ($riddles as $riddle) {
         $this->entityTypeManager->getStorage('media')->create([
-          'bundle' => $bundle->id(),
+          'bundle' => $type->id(),
           $sourceField => $riddle,
         ])->save();
       }
@@ -81,24 +81,23 @@ class RiddleMediaService implements RiddleMediaServiceInterface {
 
     $riddle_feed_ids = array_column($feed, 'uid');
 
-    /** @var \Drupal\media_entity\MediaBundleInterface[] $riddleBundles */
-    $riddleBundles = $this->entityTypeManager->getStorage('media_bundle')
+    /** @var \Drupal\media\MediaTypeInterface[] $riddleBundles */
+    $riddleBundles = $this->entityTypeManager->getStorage('media_type')
       ->loadByProperties([
-        'type' => 'riddle_marketplace',
+        'source' => 'riddle_marketplace',
       ]);
 
     $newRiddles = [];
-    foreach ($riddleBundles as $riddleBundle) {
+    foreach ($riddleBundles as $type) {
 
-      $sourceField = $riddleBundle->getTypeConfiguration()['source_field'];
-
+      $sourceField = $type->get('source_configuration')['source_field'];
       $existing_riddle_id = $this->database->select("media__$sourceField", 'n')
         ->condition("n.${sourceField}_value", $riddle_feed_ids, 'IN')
         ->fields('n', ["${sourceField}_value"])
         ->execute()
         ->fetchCol();
 
-      $newRiddles[$riddleBundle->id()] = array_diff($riddle_feed_ids, $existing_riddle_id);
+      $newRiddles[$type->id()] = array_diff($riddle_feed_ids, $existing_riddle_id);
     }
 
     return $newRiddles;
