@@ -145,17 +145,19 @@ class RiddleFeedServiceTest extends UnitTestCase {
    */
   public function processRiddleResponseDataProvider() {
     $riddleFeed = [
-      [
-        'id' => '1',
-        'title' => "My awesome Quiz",
-        'type' => "quiz",
-        'thumb' => "https://cdn.riddle.com/website/riddle/placeholders/placeholder-quiz.jpg",
-      ],
-      [
-        'id' => '2',
-        'title' => "Some poll",
-        'type' => "poll",
-        'thumb' => "https://cdn.riddle.com/website/riddle/placeholders/placeholder-poll.jpg",
+      'items' => [
+        [
+          'id' => '1',
+          'title' => "My awesome Quiz",
+          'type' => "quiz",
+          'thumb' => "https://cdn.riddle.com/website/riddle/placeholders/placeholder-quiz.jpg",
+        ],
+        [
+          'id' => '2',
+          'title' => "Some poll",
+          'type' => "poll",
+          'thumb' => "https://cdn.riddle.com/website/riddle/placeholders/placeholder-poll.jpg",
+        ],
       ],
     ];
 
@@ -163,14 +165,14 @@ class RiddleFeedServiceTest extends UnitTestCase {
       1 => [
         'id' => '1',
         'title' => 'My awesome Quiz',
-        'status' => TRUE,
+        'status' => 1,
         'image' => "https://cdn.riddle.com/website/riddle/placeholders/placeholder-quiz.jpg",
 
       ],
       2 => [
         'id' => '2',
         'title' => "Some poll",
-        'type' => "poll",
+        'status' => 1,
         'image' => "https://cdn.riddle.com/website/riddle/placeholders/placeholder-poll.jpg",
       ],
     ];
