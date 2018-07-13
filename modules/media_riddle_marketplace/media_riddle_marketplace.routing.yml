@@ -1,5 +1,5 @@
 riddle_marketplace.import:
-  path: '/admin/content/media/riddle/import'
+  path: '/admin/content/media/riddle/import:'
   defaults:
     _controller: '\Drupal\media_riddle_marketplace\Controller\RiddleImportController::content'
     _title: 'Import my riddles'

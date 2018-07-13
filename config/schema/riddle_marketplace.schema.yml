@@ -18,6 +18,3 @@ riddle_marketplace.settings:
         empty_title_prefix:
           type: string
           label: 'Riddle prefix for title'
-        fetch_unpublished:
-          type: integer
-          label: 'Fetch unpublished riddles'
