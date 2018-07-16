@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\media_entity\MediaInterface;
 use Drupal\media_entity\MediaTypeBase;
 use Drupal\riddle_marketplace\RiddleFeedServiceInterface;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
@@ -40,6 +41,13 @@ class Riddle extends MediaTypeBase {
   protected $fileSystem;
 
   /**
+   * The HTTP client to fetch the feed data with.
+   *
+   * @var \GuzzleHttp\Client
+   */
+  protected $httpClient;
+
+  /**
    * Riddle feed service.
    *
    * @var \Drupal\riddle_marketplace\RiddleFeedServiceInterface
@@ -63,13 +71,16 @@ class Riddle extends MediaTypeBase {
    *   Config factory service.
    * @param \Drupal\Core\File\FileSystem $file_system
    *   The file system service.
+   * @param \GuzzleHttp\Client $http_client
+   *   The http client service.
    * @param \Drupal\riddle_marketplace\RiddleFeedServiceInterface $riddleFeed
    *   Riddle feed service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, FileSystem $file_system, RiddleFeedServiceInterface $riddleFeed) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config_factory, FileSystem $file_system, Client $http_client, RiddleFeedServiceInterface $riddleFeed) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $config_factory->get('media_entity.settings'));
     $this->configFactory = $config_factory;
     $this->fileSystem = $file_system;
+    $this->httpClient = $http_client;
     $this->riddleFeed = $riddleFeed;
   }
 
@@ -85,6 +96,7 @@ class Riddle extends MediaTypeBase {
       $container->get('entity_field.manager'),
       $container->get('config.factory'),
       $container->get('file_system'),
+      $container->get('http_client'),
       $container->get('riddle_marketplace.feed')
     );
   }
@@ -188,9 +200,8 @@ class Riddle extends MediaTypeBase {
             file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
             // Get image from remote and save locally.
             try {
-              $response = \Drupal::httpClient()->head($riddle['image']);
-              $format = ExtensionGuesser::getInstance()
-                ->guess($response->getHeaderLine('Content-Type'));
+              $response = $this->httpClient->head($riddle['image']);
+              $format = $this->guessExtension($response->getHeaderLine('Content-Type'));
               if (in_array($format, ['jpg', 'jpeg', 'png', 'gif'])) {
                 return file_unmanaged_save_data($response->getBody(), $directory . '/' . $code . "." . $format, FILE_EXISTS_REPLACE);
               }
@@ -234,6 +245,28 @@ class Riddle extends MediaTypeBase {
     }
 
     return parent::getDefaultName($media);
+  }
+
+  /**
+   * Returns the extension based on the mime type.
+   *
+   * If the mime type is unknown, returns null.
+   *
+   * This method uses the mime type as guessed by getMimeType()
+   * to guess the file extension.
+   *
+   * @param string $mime_type
+   *   The mime type to guess extension for.
+   *
+   * @return string|null
+   *   The guessed extension or null if it cannot be guessed
+   *
+   * @see ExtensionGuesser
+   * @see getMimeType()
+   */
+  public function guessExtension($mime_type) {
+    $guesser = ExtensionGuesser::getInstance();
+    return $guesser->guess($mime_type);
   }
 
 }
