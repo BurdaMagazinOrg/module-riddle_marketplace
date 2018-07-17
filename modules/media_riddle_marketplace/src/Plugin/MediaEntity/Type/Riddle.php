@@ -200,7 +200,7 @@ class Riddle extends MediaTypeBase {
             file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
             // Get image from remote and save locally.
             try {
-              $response = $this->httpClient->head($riddle['image']);
+              $response = $this->httpClient->get($riddle['image']);
               $format = $this->guessExtension($response->getHeaderLine('Content-Type'));
               if (in_array($format, ['jpg', 'jpeg', 'png', 'gif'])) {
                 return file_unmanaged_save_data($response->getBody(), $directory . '/' . $code . "." . $format, FILE_EXISTS_REPLACE);
@@ -259,7 +259,7 @@ class Riddle extends MediaTypeBase {
    *   The mime type to guess extension for.
    *
    * @return string|null
-   *   The guessed extension or null if it cannot be guessed
+   *   The guessed extension or null if it cannot be guessed.
    *
    * @see ExtensionGuesser
    * @see getMimeType()
