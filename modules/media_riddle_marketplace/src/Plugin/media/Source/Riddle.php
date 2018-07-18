@@ -6,10 +6,14 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldTypePluginManagerInterface;
+use Drupal\Core\File\FileSystem;
 use Drupal\media\MediaSourceBase;
 use Drupal\media\MediaInterface;
 use Drupal\riddle_marketplace\RiddleFeedServiceInterface;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
 
 /**
  * Provides media type plugin for Riddle.
@@ -30,6 +34,20 @@ class Riddle extends MediaSourceBase {
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
+
+  /**
+   * The file system service.
+   *
+   * @var \Drupal\Core\File\FileSystem
+   */
+  protected $fileSystem;
+
+  /**
+   * The HTTP client to fetch the feed data with.
+   *
+   * @var \GuzzleHttp\Client
+   */
+  protected $httpClient;
 
   /**
    * Riddle feed service.
@@ -55,11 +73,17 @@ class Riddle extends MediaSourceBase {
    *   The field type plugin manager service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
+   * @param \Drupal\Core\File\FileSystem $file_system
+   *   The file system service.
+   * @param \GuzzleHttp\Client $http_client
+   *   The http client service.
    * @param \Drupal\riddle_marketplace\RiddleFeedServiceInterface $riddleFeed
    *   Riddle feed service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory, RiddleFeedServiceInterface $riddleFeed) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory, FileSystem $file_system, Client $http_client, RiddleFeedServiceInterface $riddleFeed) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $field_type_manager, $config_factory);
+    $this->fileSystem = $file_system;
+    $this->httpClient = $http_client;
     $this->riddleFeed = $riddleFeed;
   }
 
@@ -75,6 +99,8 @@ class Riddle extends MediaSourceBase {
       $container->get('entity_field.manager'),
       $container->get('plugin.manager.field.field_type'),
       $container->get('config.factory'),
+      $container->get('file_system'),
+      $container->get('http_client'),
       $container->get('riddle_marketplace.feed')
     );
   }
@@ -116,7 +142,7 @@ class Riddle extends MediaSourceBase {
 
     $riddleFeed = $this->riddleFeed->getFeed();
     $riddle = array_filter($riddleFeed, function ($entry) use ($code) {
-      return $entry['uid'] == $code;
+      return $entry['id'] == $code;
     });
 
     $riddle = current($riddle);
@@ -144,37 +170,55 @@ class Riddle extends MediaSourceBase {
           return NULL;
 
         case 'thumbnail_local':
+        case 'thumbnail_local_uri':
         case 'thumbnail_uri':
-          $local_uri = $this->getMetadata($media, 'thumbnail_local_uri');
-          if ($local_uri) {
-            if (file_exists($local_uri)) {
-              return $local_uri;
+          if (isset($riddle['image'])) {
+            $directory = $this->configFactory->get('media_riddle_marketplace.settings')->get('local_images');
+            // Try to load from local filesystem.
+            $absolute_uri = current(glob($this->fileSystem->realpath($directory . '/' . $code . ".*{jpg,jpeg,png,gif}"), GLOB_BRACE));
+            if ($absolute_uri) {
+              return $directory . '/' . $this->fileSystem->basename($absolute_uri);
             }
-            else {
-
-              $directory = dirname($local_uri);
-              file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
-
-              $image_url = $this->getMetadata($media, 'thumbnail');
-
-              return file_unmanaged_save_data(file_get_contents($image_url), $local_uri, FILE_EXISTS_REPLACE);
+            file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
+            // Get image from remote and save locally.
+            try {
+              $response = $this->httpClient->get($riddle['image']);
+              $format = $this->guessExtension($response->getHeaderLine('Content-Type'));
+              if (in_array($format, ['jpg', 'jpeg', 'png', 'gif'])) {
+                return file_unmanaged_save_data($response->getBody(), $directory . '/' . $code . "." . $format, FILE_EXISTS_REPLACE);
+              }
+            }
+            catch (ClientException $e) {
+              // Do nothing.
             }
           }
           return NULL;
-
-        case 'thumbnail_local_uri':
-          if (isset($riddle['image'])) {
-            return $this->configFactory->get('media_riddle_marketplace.settings')
-              ->get('local_images') . '/' . $code . '.' . pathinfo(parse_url($riddle['image'], PHP_URL_PATH), PATHINFO_EXTENSION);
-          }
-          return parent::getMetadata($media, 'thumbnail_uri');
-
-        default:
-          return parent::getMetadata($media, $name);
       }
     }
 
     return NULL;
+  }
+
+  /**
+   * Returns the extension based on the mime type.
+   *
+   * If the mime type is unknown, returns null.
+   *
+   * This method uses the mime type as guessed by getMimeType()
+   * to guess the file extension.
+   *
+   * @param string $mime_type
+   *   The mime type to guess extension for.
+   *
+   * @return string|null
+   *   The guessed extension or null if it cannot be guessed.
+   *
+   * @see ExtensionGuesser
+   * @see getMimeType()
+   */
+  public function guessExtension($mime_type) {
+    $guesser = ExtensionGuesser::getInstance();
+    return $guesser->guess($mime_type);
   }
 
 }
