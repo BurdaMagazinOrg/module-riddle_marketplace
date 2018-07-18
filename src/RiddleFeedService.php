@@ -53,13 +53,6 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   private $emptyTitlePrefix;
 
   /**
-   * Should unpublished riddles also fetched from api.
-   *
-   * @var int
-   */
-  private $fetchUnpublished;
-
-  /**
    * Riddle Feed Service.
    *
    * Constructor.
@@ -77,7 +70,6 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
 
     // Set Empty Title Prefix.
     $this->emptyTitlePrefix = $this->moduleSettings->get('riddle_marketplace.empty_title_prefix');
-    $this->fetchUnpublished = $this->moduleSettings->get('riddle_marketplace.fetch_unpublished');
   }
 
   /**
@@ -129,9 +121,6 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
         [$token],
         $this->moduleSettings->get('riddle_marketplace.api_url')
       );
-      if (!$this->fetchUnpublished) {
-        $url .= '&status=published';
-      }
       return $url;
     }
     throw new NoApiKeyException();
@@ -169,63 +158,24 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
   private function processRiddleResponse($riddleResponse) {
     $feed = [];
 
-    if (!empty($riddleResponse) && is_array($riddleResponse)) {
-      foreach ($riddleResponse as $riddleEntry) {
+    if (!empty($riddleResponse) && is_array($riddleResponse['items'])) {
+      foreach ($riddleResponse['items'] as $riddleEntry) {
         // Skip invalid riddle feed entries.
         if (!$this->isValidRiddleFeedEntry($riddleEntry)) {
           continue;
         }
 
-        $feed[$riddleEntry['uid']] = [
+        $feed[$riddleEntry['id']] = [
           'title' => $this->getRiddleTitle($riddleEntry),
-          'uid' => $riddleEntry['uid'],
-          'status' => ($riddleEntry['status'] == 'published') ? 1 : 0,
-          'image' => $this->getImage($riddleEntry),
+          'id' => $riddleEntry['id'],
+          // All riddles in response are published atm.
+          'status' => 1,
+          'image' => $riddleEntry['thumb'],
         ];
       }
     }
 
     return $feed;
-  }
-
-  /**
-   * Return an image url.
-   *
-   * @param array|null $riddleEntry
-   *   Single Riddle Feed Entry.
-   *
-   * @return string
-   *   A full url.
-   */
-  private function getImage($riddleEntry) {
-
-    $image = $data = NULL;
-    if (!empty($riddleEntry['data']['image']['standard'])) {
-      $data = $riddleEntry['data'];
-    }
-    elseif (!empty($riddleEntry['draftData']['image']['standard'])) {
-      $data = $riddleEntry['draftData'];
-    }
-
-    if ($data) {
-      $urlParts = parse_url($data['image']['standard']);
-      $image = $urlParts['path'];
-
-      $pathinfo = pathinfo($urlParts['path']);
-
-      if (empty($urlParts['host'])) {
-        $image = 'https://www.riddle.com' . $image;
-      }
-      else {
-        $image = $urlParts['scheme'] . '://' . $urlParts['host'] . $image;
-      }
-
-      if (!empty($data['image']['format']) && empty($pathinfo['extension'])) {
-        $image = $image . '.' . $data['image']['format'];
-      }
-    }
-
-    return $image;
   }
 
   /**
@@ -239,9 +189,7 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
    */
   private function isValidRiddleFeedEntry($riddleEntry) {
     if (
-      empty($riddleEntry) || !is_array($riddleEntry)
-      || ((empty($riddleEntry['data']) || !is_array($riddleEntry['data'])) && (empty($riddleEntry['draftData']) || !is_array($riddleEntry['draftData'])))
-      || empty($riddleEntry['uid'])
+      empty($riddleEntry) || !is_array($riddleEntry) || empty($riddleEntry['id'])
     ) {
       return FALSE;
     }
@@ -262,15 +210,10 @@ class RiddleFeedService implements RiddleFeedServiceInterface {
    *   Riddle element title.
    */
   private function getRiddleTitle(array $riddleEntry) {
-    if (!empty($riddleEntry['data']['title'])) {
-      return $riddleEntry['data']['title'];
+    if (!empty($riddleEntry['title'])) {
+      return $riddleEntry['title'];
     }
-
-    if (!empty($riddleEntry['draftData']['title'])) {
-      return $riddleEntry['draftData']['title'];
-    }
-
-    return $this->emptyTitlePrefix . $riddleEntry['uid'];
+    return $this->emptyTitlePrefix . $riddleEntry['id'];
   }
 
   /**

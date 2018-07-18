@@ -78,8 +78,11 @@ class RiddleMediaService implements RiddleMediaServiceInterface {
   public function getNewRiddles() {
 
     $feed = $this->feedService->getFeed();
+    $riddle_feed_ids = array_column($feed, 'id');
 
-    $riddle_feed_ids = array_column($feed, 'uid');
+    if (empty($riddle_feed_ids)) {
+      return [];
+    }
 
     /** @var \Drupal\media_entity\MediaBundleInterface[] $riddleBundles */
     $riddleBundles = $this->entityTypeManager->getStorage('media_bundle')
@@ -89,7 +92,6 @@ class RiddleMediaService implements RiddleMediaServiceInterface {
 
     $newRiddles = [];
     foreach ($riddleBundles as $riddleBundle) {
-
       $sourceField = $riddleBundle->getTypeConfiguration()['source_field'];
 
       $existing_riddle_id = $this->database->select("media__$sourceField", 'n')
