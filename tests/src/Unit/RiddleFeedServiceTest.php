@@ -145,56 +145,35 @@ class RiddleFeedServiceTest extends UnitTestCase {
    */
   public function processRiddleResponseDataProvider() {
     $riddleFeed = [
-      [
-        'data' => [
-          'title' => '',
+      'items' => [
+        [
+          'id' => '1',
+          'title' => "My awesome Quiz",
+          'type' => "quiz",
+          'thumb' => "https://cdn.riddle.com/website/riddle/placeholders/placeholder-quiz.jpg",
         ],
-        'status' => 'published',
-        'uid' => '1',
-      ],
-      [
-        'data' => [
-          'title' => 'Defined Title',
+        [
+          'id' => '2',
+          'title' => "Some poll",
+          'type' => "poll",
+          'thumb' => "https://cdn.riddle.com/website/riddle/placeholders/placeholder-poll.jpg",
         ],
-        'status' => 'published',
-        'uid' => '2',
-      ],
-      [
-        'data' => [],
-        'draftData' => [
-          'title' => 'Draft title',
-        ],
-        'status' => 'draft',
-        'uid' => '3',
-      ],
-      [
-        'data' => [
-          'title' => 'No UID Title',
-        ],
-        'status' => 'published',
-        'uid' => '',
       ],
     ];
 
     $firstExpectedResult = [
       1 => [
-        'title' => 'Riddle 1',
-        'status' => TRUE,
-        'uid' => '1',
-        'image' => NULL,
+        'id' => '1',
+        'title' => 'My awesome Quiz',
+        'status' => 1,
+        'image' => "https://cdn.riddle.com/website/riddle/placeholders/placeholder-quiz.jpg",
 
       ],
       2 => [
-        'title' => 'Defined Title',
-        'status' => TRUE,
-        'uid' => '2',
-        'image' => NULL,
-      ],
-      3 => [
-        'title' => 'Draft title',
-        'status' => FALSE,
-        'uid' => '3',
-        'image' => NULL,
+        'id' => '2',
+        'title' => "Some poll",
+        'status' => 1,
+        'image' => "https://cdn.riddle.com/website/riddle/placeholders/placeholder-poll.jpg",
       ],
     ];
 

@@ -30,14 +30,6 @@ class SettingsForm extends ConfigFormBase {
         [':riddle' => 'http://www.riddle.com']),
       '#default_value' => $settings->get('riddle_marketplace.token'),
     ];
-
-    $form['fetch_unpublished'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Fetch unpublished riddles'),
-      '#default_value' => $settings->get('riddle_marketplace.fetch_unpublished'),
-      '#description' => $this->t('If checked, all riddles will be fetched from the API, not only published ones'),
-    ];
-
     return parent::buildForm($form, $form_state);
   }
 
@@ -48,9 +40,7 @@ class SettingsForm extends ConfigFormBase {
     parent::submitForm($form, $form_state);
     $values = $form_state->getValues();
     $config = $this->configFactory()->getEditable('riddle_marketplace.settings');
-    $config->set('riddle_marketplace.token', $values['token'])
-      ->set('riddle_marketplace.fetch_unpublished', $values['fetch_unpublished'])
-      ->save();
+    $config->set('riddle_marketplace.token', $values['token'])->save();
   }
 
   /**
