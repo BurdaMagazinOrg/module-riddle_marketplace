@@ -100,7 +100,11 @@ class RiddleMediaService implements RiddleMediaServiceInterface {
         ->execute()
         ->fetchCol();
 
-      $newRiddles[$type->id()] = array_diff($riddle_feed_ids, $existing_riddle_id);
+      // Sort oldest riddles to the top, so they will be created first.
+      $new_riddles = array_diff($riddle_feed_ids, $existing_riddle_id);
+      sort($new_riddles);
+
+      $newRiddles[$type->id()] = $new_riddles;
     }
 
     return $newRiddles;
