@@ -104,7 +104,7 @@ class RiddleMediaService implements RiddleMediaServiceInterface {
       $new_riddles = array_diff($riddle_feed_ids, $existing_riddle_id);
       sort($new_riddles);
 
-      $newRiddles[$riddleBundle->id()] = $new_riddles;
+      $newRiddles[$type->id()] = $new_riddles;
     }
 
     return $newRiddles;
