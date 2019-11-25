@@ -32,9 +32,9 @@ class RiddleController extends ControllerBase {
       ];
     }
     else {
-      drupal_set_message($this->t('Please provide an access token in the <a href="/@link">configuration form</a>.', [
+      $this->messenger()->addWarning($this->t('Please provide an access token in the <a href="/@link">configuration form</a>.', [
         '@link' => Url::fromRoute('riddle_marketplace.admin_settings')->getInternalPath(),
-      ]), 'warning');
+      ]));
       return [];
     }
   }

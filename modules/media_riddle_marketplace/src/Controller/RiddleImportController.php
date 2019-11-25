@@ -90,7 +90,7 @@ class RiddleImportController extends ControllerBase {
       }
     }
     catch (NoApiKeyException $exception) {
-      drupal_set_message($this->t('No API key provided. Please configure the riddle module.'), 'error');
+      $this->messenger()->addError($this->t('No API key provided. Please configure the riddle module.'));
       return new RedirectResponse($this->request->server->get('HTTP_REFERER'));
     }
 

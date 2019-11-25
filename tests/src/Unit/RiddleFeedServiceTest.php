@@ -46,13 +46,13 @@ class RiddleFeedServiceTest extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->cacheServiceMock = $this->getMock('Drupal\Core\Cache\CacheBackendInterface');
+    $this->cacheServiceMock = $this->createMock('Drupal\Core\Cache\CacheBackendInterface');
     $this->setUpConfigFactoryMock();
 
     $container = new ContainerBuilder();
     $container->set(
       'cache.riddle_feed',
-      $this->getMock('\Drupal\Core\Cache\CacheBackendInterface')
+      $this->createMock('\Drupal\Core\Cache\CacheBackendInterface')
     );
 
     \Drupal::setContainer($container);
@@ -62,11 +62,11 @@ class RiddleFeedServiceTest extends UnitTestCase {
    * Setup Config relevant for proper functioning of tests.
    */
   protected function setUpConfigFactoryMock() {
-    $this->configFactoryMock = $this->getMock('\Drupal\Core\Config\ConfigFactoryInterface');
+    $this->configFactoryMock = $this->createMock('\Drupal\Core\Config\ConfigFactoryInterface');
 
-    $storage = $this->getMock('Drupal\Core\Config\StorageInterface');
-    $event_dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-    $typed_config = $this->getMock('Drupal\Core\Config\TypedConfigManagerInterface');
+    $storage = $this->createMock('Drupal\Core\Config\StorageInterface');
+    $event_dispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+    $typed_config = $this->createMock('Drupal\Core\Config\TypedConfigManagerInterface');
     $config = new Config('riddle_marketplace', $storage, $event_dispatcher, $typed_config);
     $config->set('riddle_marketplace.empty_title_prefix', 'Riddle ');
 

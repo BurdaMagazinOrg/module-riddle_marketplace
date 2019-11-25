@@ -179,13 +179,13 @@ class Riddle extends MediaSourceBase {
             if ($absolute_uri) {
               return $directory . '/' . $this->fileSystem->basename($absolute_uri);
             }
-            file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
+            $this->fileSystem->prepareDirectory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
             // Get image from remote and save locally.
             try {
               $response = $this->httpClient->get($riddle['image']);
               $format = $this->guessExtension($response->getHeaderLine('Content-Type'));
               if (in_array($format, ['jpg', 'jpeg', 'png', 'gif'])) {
-                return file_unmanaged_save_data($response->getBody(), $directory . '/' . $code . "." . $format, FILE_EXISTS_REPLACE);
+                return $this->fileSystem->saveData($response->getBody(), $directory . '/' . $code . "." . $format, FILE_EXISTS_REPLACE);
               }
             }
             catch (ClientException $e) {
