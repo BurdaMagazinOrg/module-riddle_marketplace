@@ -2,8 +2,8 @@ name: 'Media Riddle Marketplace'
 description: 'Integrates riddle module with media'
 package: Riddle
 type: module
-core: 8.x
+core_version_requirement: ^8.7.7 || ^9
 
 dependencies:
-  - drupal:media (>= 8.4)
+  - drupal:media
   - riddle_marketplace:riddle_marketplace

@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldTypePluginManagerInterface;
 use Drupal\Core\File\FileSystem;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\media\MediaSourceBase;
 use Drupal\media\MediaInterface;
 use Drupal\riddle_marketplace\RiddleFeedServiceInterface;
@@ -179,13 +180,13 @@ class Riddle extends MediaSourceBase {
             if ($absolute_uri) {
               return $directory . '/' . $this->fileSystem->basename($absolute_uri);
             }
-            $this->fileSystem->prepareDirectory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
+            $this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
             // Get image from remote and save locally.
             try {
               $response = $this->httpClient->get($riddle['image']);
               $format = $this->guessExtension($response->getHeaderLine('Content-Type'));
               if (in_array($format, ['jpg', 'jpeg', 'png', 'gif'])) {
-                return $this->fileSystem->saveData($response->getBody(), $directory . '/' . $code . "." . $format, FILE_EXISTS_REPLACE);
+                return $this->fileSystem->saveData($response->getBody(), $directory . '/' . $code . "." . $format, FileSystemInterface::EXISTS_REPLACE);
               }
             }
             catch (ClientException $e) {
