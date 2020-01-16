@@ -11,7 +11,7 @@ use Drupal\Core\File\FileSystemInterface;
  * Implements hook_install().
  */
 function media_riddle_marketplace_install() {
-  $filesystem =\Drupal::service('file_system');
+  $filesystem = \Drupal::service('file_system');
   $source = drupal_get_path('module', 'media_riddle_marketplace') . '/images';
   $destination = \Drupal::config('media.settings')->get('icon_base_uri');
   $filesystem->prepareDirectory($destination, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
