@@ -11,12 +11,13 @@ use Drupal\Core\File\FileSystemInterface;
  * Implements hook_install().
  */
 function media_riddle_marketplace_install() {
+  /** @var \Drupal\Core\File\FileSystemInterface $filesystem */
   $filesystem = \Drupal::service('file_system');
   $source = drupal_get_path('module', 'media_riddle_marketplace') . '/images';
   $destination = \Drupal::config('media.settings')->get('icon_base_uri');
   $filesystem->prepareDirectory($destination, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
 
-  $files = file_scan_directory($source, '/.*\.(svg|png|jpg|jpeg|gif)$/');
+  $files = $filesystem->scanDirectory($source, '/.*\.(svg|png|jpg|jpeg|gif)$/');
   foreach ($files as $file) {
     // When reinstalling we don't want to copy the icons when
     // they already exist. The icons could be replaced (by a contrib module or
